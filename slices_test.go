@@ -248,28 +248,23 @@ func TestReverse(tt *testing.T) {
 		s5 := []string{"foo", "bar", "baz"}
 
 		// Reverse(nil) gives nil
-		Reverse(s1)
-		if e, a := ([]string)(nil), s1; !sliceEqual(a, e) {
+		if e, a := ([]string)(nil), Reverse(s1); !sliceEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
 		// Reverse([]) gives empty slice
-		Reverse(s2)
-		if e, a := []string{}, s2; !sliceEqual(a, e) {
+		if e, a := []string{}, Reverse(s2); !sliceEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
 		// Reverse([a, b, ...]) gives slice [..., b, a]
-		Reverse(s3)
-		Reverse(s4)
-		Reverse(s5)
-		if e, a := []string{"foo"}, s3; !sliceEqual(a, e) {
+		if e, a := []string{"foo"}, Reverse(s3); !sliceEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
-		if e, a := []string{"bar", "foo"}, s4; !sliceEqual(a, e) {
+		if e, a := []string{"bar", "foo"}, Reverse(s4); !sliceEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
-		if e, a := []string{"baz", "bar", "foo"}, s5; !sliceEqual(a, e) {
+		if e, a := []string{"baz", "bar", "foo"}, Reverse(s5); !sliceEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})

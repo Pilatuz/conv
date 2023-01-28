@@ -1,11 +1,12 @@
 package conv
 
-// Slice initializes slice with some values.
+// Slice initializes slice with some values of the same type.
 func Slice[E any](s ...E) []E {
 	return s
 }
 
 // SliceNotNil gets non-`nil` slice.
+// I.e. if input slice is `nil` then empty slice is returned instead.
 func SliceNotNil[S ~[]E, E any](s S) S {
 	if s != nil {
 		return s // as is
@@ -15,6 +16,7 @@ func SliceNotNil[S ~[]E, E any](s S) S {
 }
 
 // SliceFromChan drains the channel into array.
+// Assuming the channel will be closed soon.
 func SliceFromChan[E any](ch <-chan E) []E {
 	if ch == nil {
 		return nil
@@ -28,7 +30,8 @@ func SliceFromChan[E any](ch <-chan E) []E {
 	return out
 }
 
-// Unique gets only unique elements (in-place).
+// Unique gets only unique elements.
+// Returns original slice with duplicates removed in-place.
 func Unique[S ~[]E, E comparable](s S) S {
 	if len(s) <= 1 {
 		return s // as is
@@ -50,9 +53,12 @@ func Unique[S ~[]E, E comparable](s S) S {
 	return s[:k]
 }
 
-// Reverse reverses elements (in-place).
-func Reverse[S ~[]E, E any](s S) {
+// Reverse reverses elements.
+// Returns original slice with elements reversed in-place.
+func Reverse[S ~[]E, E any](s S) S {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
+
+	return s // the same
 }

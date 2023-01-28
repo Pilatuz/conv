@@ -1,13 +1,13 @@
 # conv [![GoDoc][doc-img]][doc] [![Build Status][ci-img]][ci] [![Coverage Status][cov-img]][cov] [![Go Report Card][reportcard-img]][reportcard]
 
-Useful tools for trivial Go conversions.
+Useful generic tools for trivial Go conversions.
 
 Released under the [MIT License](LICENSE).
 
 
 ## Quick start
 
-TBD
+TBD. See examples.
 
 
 [doc-img]: https://godoc.org/github.com/Pilatuz/conv?status.svg
