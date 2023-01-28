@@ -6,12 +6,21 @@ func PtrFrom[T any](v T) *T {
 }
 
 // FromPtrOr dereferences pointer or use fallback value if pointer is `nil`.
-func FromPtrOr[T any](p *T, ifnil T) T {
+func FromPtrOr[T any](p *T, ifNil T) T {
 	if p != nil {
 		return *p
 	}
 
-	return ifnil
+	return ifNil
+}
+
+// FromPtrOrFunc dereferences pointer or use fallback function call result if pointer is `nil`.
+func FromPtrOrFunc[T any](p *T, ifNilFn func() T) T {
+	if p != nil {
+		return *p
+	}
+
+	return ifNilFn()
 }
 
 // OmitEmpty returns `nil` pointer if value is empty (default).

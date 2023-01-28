@@ -81,6 +81,54 @@ func TestFromPtrOr(tt *testing.T) {
 	})
 }
 
+// TestFromPtrOrFunc unit tests for `FromPtrOrFunc` function.
+func TestFromPtrOrFunc(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		fn := func() string { return "ups" }
+
+		var p1 *string
+		if e, a := "ups", FromPtrOrFunc(p1, fn); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p2 := "foo"
+		if e, a := "foo", FromPtrOrFunc(&p2, fn); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		fn := func() int { return 123 }
+
+		var p1 *int
+		if e, a := 123, FromPtrOrFunc(p1, fn); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p2 := 456
+		if e, a := 456, FromPtrOrFunc(&p2, fn); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// boolean
+	tt.Run("bool", func(t *testing.T) {
+		fn := func() bool { return false }
+
+		var p1 *bool
+		if e, a := false, FromPtrOrFunc(p1, fn); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p2 := true
+		if e, a := true, FromPtrOrFunc(&p2, fn); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
 // TestOmitEmpty unit tests for `OmitEmpty` function.
 func TestOmitEmpty(tt *testing.T) {
 	// string
