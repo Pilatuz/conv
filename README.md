@@ -4,11 +4,7 @@ Useful generic tools for trivial Go conversions.
 
 Released under the [MIT License](LICENSE).
 
-
-## Quick start
-
-TBD. See examples.
-
+See [package documentation][doc].
 
 [doc-img]: https://godoc.org/github.com/Pilatuz/conv?status.svg
 [doc]: https://godoc.org/github.com/Pilatuz/conv

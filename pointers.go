@@ -1,11 +1,11 @@
 package conv
 
-// PtrFrom gets pointer from any value.
+// PtrFrom gets pointer from any value or constant v.
 func PtrFrom[T any](v T) *T {
 	return &v
 }
 
-// FromPtrOr dereferences pointer or use fallback value if pointer is `nil`.
+// FromPtrOr dereferences pointer p or use fallback value ifNil if pointer is nil.
 func FromPtrOr[T any](p *T, ifNil T) T {
 	if p != nil {
 		return *p
@@ -14,7 +14,9 @@ func FromPtrOr[T any](p *T, ifNil T) T {
 	return ifNil
 }
 
-// FromPtrOrFunc dereferences pointer or use fallback function call result if pointer is `nil`.
+// FromPtrOrFunc dereferences pointer p or use fallback function ifNilFn call result if pointer p is nil.
+//
+// The main difference from [FromPtrOr] - the fallback value is lazy initialized here.
 func FromPtrOrFunc[T any](p *T, ifNilFn func() T) T {
 	if p != nil {
 		return *p
@@ -23,7 +25,9 @@ func FromPtrOrFunc[T any](p *T, ifNilFn func() T) T {
 	return ifNilFn()
 }
 
-// OmitEmpty returns `nil` pointer if value is empty (default).
+// OmitEmpty returns nil pointer if value *p is empty (or default).
+//
+// Is used to get nil pointer instead of empty string or zero integer.
 func OmitEmpty[T comparable](p *T) *T {
 	if p != nil {
 		var EMPTY T
@@ -35,7 +39,9 @@ func OmitEmpty[T comparable](p *T) *T {
 	return p // as is
 }
 
-// FirstNonNil gets first non-`nil` pointer.
+// FirstNonNil gets first non-nil pointer.
+//
+// It works similar to SQL COALESCE function.
 func FirstNonNil[T any](pp ...*T) *T {
 	for _, p := range pp {
 		if p != nil {
@@ -43,5 +49,5 @@ func FirstNonNil[T any](pp ...*T) *T {
 		}
 	}
 
-	return nil // all `nil`
+	return nil // all nil
 }
