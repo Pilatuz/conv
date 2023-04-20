@@ -60,6 +60,18 @@ func ExampleSliceFromChan() {
 	// [<nil> <nil> <nil>]
 }
 
+func ExampleMapNotNil() {
+	var m map[string]string
+	m = conv.MapNotNil(m)
+	if m == nil {
+		fmt.Println("<nil>")
+	} else {
+		fmt.Println("{}")
+	}
+	// Output:
+	// {}
+}
+
 func ExampleUnique() {
 	s := conv.Slice(4, 1, 2, 1, 2, 3, 2, 1)
 	fmt.Println(conv.Unique(s))
