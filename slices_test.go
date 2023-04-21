@@ -120,6 +120,55 @@ func TestSliceNotNil(tt *testing.T) {
 	})
 }
 
+// TestSliceJoin unit tests for `SliceJoin` function.
+func TestSliceJoin(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var A []string
+		B := []string{}
+		C := []string{"foo", "foo2"}
+		D := []string{"bar", "bar2"}
+
+		// SliceJoin() gives empty slice
+		if e, a := []string{}, SliceJoin[[]string](); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceJoin(nil, []) gives empty slice
+		if e, a := []string{}, SliceJoin(A, B); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceJoin(C, D) gives slice [C,D]
+		if e, a := []string{"foo", "foo2", "bar", "bar2"}, SliceJoin(A, C, B, D); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var A []int
+		B := []int{}
+		C := []int{1, 2}
+		D := []int{3, 4}
+
+		// SliceJoin() gives empty slice
+		if e, a := []int{}, SliceJoin[[]int](); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceJoin(nil, []) gives empty slice
+		if e, a := []int{}, SliceJoin(A, B); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceJoin(C, D) gives slice [C,D]
+		if e, a := []int{1, 2, 3, 4}, SliceJoin(A, C, B, D); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
 // TestSliceFromChan unit tests for `SliceFromChan` function.
 func TestSliceFromChan(tt *testing.T) {
 	// string

@@ -16,6 +16,23 @@ func SliceNotNil[S ~[]E, E any](s S) S {
 	return S{} // empty
 }
 
+// SliceJoin joins multiple slices.
+func SliceJoin[S ~[]E, E any](ss ...S) S {
+	// output's slice capacity
+	var n int
+	for _, s := range ss {
+		n += len(s)
+	}
+
+	// join the slices
+	out := make(S, 0, n)
+	for _, s := range ss {
+		out = append(out, s...)
+	}
+
+	return out
+}
+
 // SliceFromChan drains the channel ch into array.
 //
 // It collects all the values in channel ch until the channel is closed.

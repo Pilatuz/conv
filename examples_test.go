@@ -31,6 +31,15 @@ func ExampleSliceNotNil() {
 	// []
 }
 
+func ExampleSliceJoin() {
+	s := conv.SliceJoin(
+		conv.Slice("foo", "bar"),
+		conv.Slice("baz"))
+	fmt.Println(s)
+	// Output:
+	// [foo bar baz]
+}
+
 func ExampleSliceFromChan() {
 	wg := &sync.WaitGroup{}
 	errCh := make(chan error)
