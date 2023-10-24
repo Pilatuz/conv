@@ -91,7 +91,8 @@ func ExampleUnique() {
 
 func ExampleReverse() {
 	s := conv.Slice(1, 2, 3, 4)
-	fmt.Println(conv.Reverse(s))
+	conv.Reverse(s)
+	fmt.Println(s)
 	// Output:
 	// [4 3 2 1]
 }

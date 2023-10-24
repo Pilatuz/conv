@@ -91,12 +91,10 @@ func Unique[S ~[]E, E comparable](s S) S {
 // Reverse reverses elements.
 //
 // Returns original slice with elements reversed in-place.
-func Reverse[S ~[]E, E any](s S) S {
+func Reverse[S ~[]E, E any](s S) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
-
-	return s // the same
 }
 
 // SliceAnd returns the intersection between two slices.
