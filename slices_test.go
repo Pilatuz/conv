@@ -485,15 +485,15 @@ func TestSliceAnd(tt *testing.T) {
 		test(Foo, Empty, Nil)   // [foo] && [] => nil
 
 		test(Foo, Bar, Nil) // [foo] && [bar] => nil
-		test(Bar, Foo, Nil) // [foo] && [bar] => nil
+		test(Bar, Foo, Nil) // [bar] && [foo] => nil
 
 		test(FooBar, Foo, Foo)    // [foo bar] && [foo] => [foo]
 		test(Foo, FooBar, Foo)    // [foo] && [foo bar] => [foo]
 		test(FooBarBaz, Foo, Foo) // [foo bar baz] && [foo] => [foo]
 		test(Foo, FooBarBaz, Foo) // [foo] && [foo bar baz] => [foo]
 
-		test(FooBar, FooBarBaz, FooBar)       // [foo bar baz] && [foo bar] => [foo bar]
-		test(FooBarBaz, FooBar, FooBar)       // [foo bar] && [foo bar baz] => [foo bar]
+		test(FooBar, FooBarBaz, FooBar)       // [foo bar] && [foo bar baz] => [foo bar]
+		test(FooBarBaz, FooBar, FooBar)       // [foo bar baz] && [foo bar] => [foo bar]
 		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] && [foo bar baz] => [foo bar baz]
 		test(FooBar, FooBar, FooBar)          // [foo bar] && [foo bar] => [foo bar]
 		test(Foo, Foo, Foo)                   // [foo] && [foo] => [foo]
@@ -528,7 +528,7 @@ func TestSliceAnd(tt *testing.T) {
 		test(Foo, Empty, Nil)   // [foo] && [] => nil
 
 		test(Foo, Bar, Nil) // [foo] && [bar] => nil
-		test(Bar, Foo, Nil) // [foo] && [bar] => nil
+		test(Bar, Foo, Nil) // [bar] && [foo] => nil
 
 		test(FooBar, Foo, Foo)    // [foo bar] && [foo] => [foo]
 		test(Foo, FooBar, Foo)    // [foo] && [foo bar] => [foo]
@@ -540,6 +540,101 @@ func TestSliceAnd(tt *testing.T) {
 		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] && [foo bar baz] => [foo bar baz]
 		test(FooBar, FooBar, FooBar)          // [foo bar] && [foo bar] => [foo bar]
 		test(Foo, Foo, Foo)                   // [foo] && [foo] => [foo]
+	})
+}
+
+// TestSliceSub unit tests for `SliceSub` function.
+func TestSliceSub(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var Nil []string
+		Empty := []string{}
+		Foo := []string{"foo"}
+		Bar := []string{"bar"}
+		Baz := []string{"baz"}
+		FooBar := []string{"foo", "bar"}
+		BarBaz := []string{"bar", "baz"}
+		FooBarBaz := []string{"foo", "bar", "baz"}
+
+		test := func(a, b []string, e1 []string) {
+			t.Helper()
+			if a1 := SliceSub(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceSub(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
+			if a1 := SliceSubBy(func(v string) string { return v }, a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceSub(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
+		}
+
+		test(Nil, Nil, Nil)     // nil - nil => nil
+		test(Nil, Empty, Nil)   // nil - [] => nil
+		test(Empty, Nil, Nil)   // [] - nil => nil
+		test(Empty, Empty, Nil) // [] - [] => nil
+		test(Nil, Foo, Nil)     // nil - [foo] => nil
+		test(Empty, Foo, Nil)   // [] - [foo] => nil
+		test(Foo, Nil, Foo)     // [foo] - nil => [foo]
+		test(Foo, Empty, Foo)   // [foo] - [] => [foo]
+
+		test(Foo, Bar, Foo) // [foo] - [bar] => [foo]
+		test(Bar, Foo, Bar) // [bar] - [foo] => [bar]
+
+		test(FooBar, Foo, Bar)       // [foo bar] - [foo] => [bar]
+		test(FooBar, Bar, Foo)       // [foo bar] - [bar] => [foo]
+		test(Foo, FooBar, Nil)       // [foo] - [foo bar] => nil
+		test(FooBarBaz, Foo, BarBaz) // [foo bar baz] - [foo] => [bar baz]
+		test(Foo, FooBarBaz, nil)    // [foo] - [foo bar baz] => nil
+
+		test(FooBar, FooBarBaz, Nil)    // [foo bar] - [foo bar baz] => nil
+		test(FooBarBaz, FooBar, Baz)    // [foo bar baz] - [foo bar] => [baz]
+		test(FooBarBaz, FooBarBaz, Nil) // [foo bar baz] - [foo bar baz] => nil
+		test(FooBar, FooBar, Nil)       // [foo bar] && [foo bar] => nil
+		test(Foo, Foo, Nil)             // [foo] && [foo] => nil
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var Nil []int
+		Empty := []int{}
+		Foo := []int{123}
+		Bar := []int{456}
+		Baz := []int{789}
+		FooBar := []int{123, 456}
+		BarBaz := []int{456, 789}
+		FooBarBaz := []int{123, 456, 789}
+
+		test := func(a, b []int, e1 []int) {
+			t.Helper()
+			if a1 := SliceSub(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceSub(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
+			if a1 := SliceSubBy(func(v int) int { return v }, a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceSub(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
+		}
+
+		test(Nil, Nil, Nil)     // nil - nil => nil
+		test(Nil, Empty, Nil)   // nil - [] => nil
+		test(Empty, Nil, Nil)   // [] - nil => nil
+		test(Empty, Empty, Nil) // [] - [] => nil
+		test(Nil, Foo, Nil)     // nil - [foo] => nil
+		test(Empty, Foo, Nil)   // [] - [foo] => nil
+		test(Foo, Nil, Foo)     // [foo] - nil => [foo]
+		test(Foo, Empty, Foo)   // [foo] - [] => [foo]
+
+		test(Foo, Bar, Foo) // [foo] - [bar] => [foo]
+		test(Bar, Foo, Bar) // [bar] - [foo] => [bar]
+
+		test(FooBar, Foo, Bar)       // [foo bar] - [foo] => [bar]
+		test(FooBar, Bar, Foo)       // [foo bar] - [bar] => [foo]
+		test(Foo, FooBar, Nil)       // [foo] - [foo bar] => nil
+		test(FooBarBaz, Foo, BarBaz) // [foo bar baz] - [foo] => [bar baz]
+		test(Foo, FooBarBaz, nil)    // [foo] - [foo bar baz] => nil
+
+		test(FooBar, FooBarBaz, Nil)    // [foo bar] - [foo bar baz] => nil
+		test(FooBarBaz, FooBar, Baz)    // [foo bar baz] - [foo bar] => [baz]
+		test(FooBarBaz, FooBarBaz, Nil) // [foo bar baz] - [foo bar baz] => nil
+		test(FooBar, FooBar, Nil)       // [foo bar] && [foo bar] => nil
+		test(Foo, Foo, Nil)             // [foo] && [foo] => nil
 	})
 }
 
