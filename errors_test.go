@@ -8,7 +8,7 @@ import (
 	. "github.com/Pilatuz/conv"
 )
 
-// TestErrorsAs unit tests for ErrorsAs function.
+// TestErrorsAs unit tests for `ErrorsAs` function.
 func TestErrorsAs(tt *testing.T) {
 	tt.Run("not_ok", func(t *testing.T) {
 		err := context.Canceled

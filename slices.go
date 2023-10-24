@@ -49,6 +49,21 @@ func SliceFromChan[E any](ch <-chan E) []E {
 	return out
 }
 
+// SliceToChan converts an array to read-only channel.
+func SliceToChan[S ~[]E, E any](s S, chanBufSize int) <-chan E {
+	ch := make(chan E, chanBufSize)
+
+	go func() {
+		defer close(ch) // close later
+
+		for _, v := range s {
+			ch <- v // send to channel
+		}
+	}()
+
+	return ch
+}
+
 // Unique gets only unique elements.
 //
 // Returns original slice with duplicates removed in-place.
@@ -70,7 +85,7 @@ func Unique[S ~[]E, E comparable](s S) S {
 		k++
 	}
 
-	return s[:k]
+	return s[:k] // in-place
 }
 
 // Reverse reverses elements.

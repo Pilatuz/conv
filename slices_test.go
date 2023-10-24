@@ -229,6 +229,66 @@ func TestSliceFromChan(tt *testing.T) {
 	})
 }
 
+// TestSliceToChan unit tests for `SliceToChan` function.
+func TestSliceToChan(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		// SliceToChan(nil) gives not nil, but empty channel
+		var ss []string
+		ch := SliceToChan(ss, 0)
+		if ch == nil {
+			t.Errorf("expected not-nil channel")
+		}
+		v, ok := <-ch
+		if ok || v != "" {
+			t.Errorf("expected empty channel, found `%v`", v)
+		}
+
+		ss = []string{"foo", "bar"}
+		if e, a := ss, SliceFromChan(SliceToChan(ss, 0)); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		// SliceToChan(nil) gives not nil, but empty channel
+		var ss []int
+		ch := SliceToChan(ss, 0)
+		if ch == nil {
+			t.Errorf("expected not-nil channel")
+		}
+		v, ok := <-ch
+		if ok || v != 0 {
+			t.Errorf("expected empty channel, found `%v`", v)
+		}
+
+		ss = []int{123, 456}
+		if e, a := ss, SliceFromChan(SliceToChan(ss, 0)); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// boolean
+	tt.Run("bool", func(t *testing.T) {
+		// SliceToChan(nil) gives not nil, but empty channel
+		var ss []bool
+		ch := SliceToChan(ss, 0)
+		if ch == nil {
+			t.Errorf("expected not-nil channel")
+		}
+		v, ok := <-ch
+		if ok || v != false {
+			t.Errorf("expected empty channel, found `%v`", v)
+		}
+
+		ss = []bool{true, false}
+		if e, a := ss, SliceFromChan(SliceToChan(ss, 0)); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
 // TestUnique unit tests for `Unique` function.
 func TestUnique(tt *testing.T) {
 	// string
