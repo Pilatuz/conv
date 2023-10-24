@@ -100,11 +100,8 @@ func Reverse[S ~[]E, E any](s S) {
 // SliceAnd returns the intersection between two slices.
 // I.e. elements presented in both slices.
 func SliceAnd[S ~[]E, E comparable](s1 S, s2 S) S {
-	if len(s1) == 0 {
-		return s2
-	}
-	if len(s2) == 0 {
-		return s1
+	if len(s1) == 0 || len(s2) == 0 {
+		return nil
 	}
 
 	// all elements seen in s1
@@ -113,12 +110,32 @@ func SliceAnd[S ~[]E, E comparable](s1 S, s2 S) S {
 		seen[v] = struct{}{}
 	}
 
-	out := make(S, 0, len(s2))
+	var out S // capacity is unknown
 	for _, v := range s2 {
 		if _, ok := seen[v]; !ok {
 			continue // skip it
 		}
 		out = append(out, v)
+	}
+
+	return out
+}
+
+// SliceOr returns the union between two (or more) slices.
+// I.e. unique elements presented in at least one slice.
+func SliceOr[S ~[]E, E comparable](ss ...S) S {
+	// all elements seen so far
+	seen := make(map[E]struct{})
+
+	var out S // capacity is unknown
+	for _, s := range ss {
+		for _, v := range s {
+			if _, ok := seen[v]; ok {
+				continue // skip it
+			}
+			seen[v] = struct{}{}
+			out = append(out, v)
+		}
 	}
 
 	return out

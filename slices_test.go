@@ -458,146 +458,167 @@ func TestReverse(tt *testing.T) {
 func TestSliceAnd(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
-		var s1 []string
-		s2 := []string{}
-		s3 := []string{"foo"}
-		s4 := []string{"foo", "bar"}
-		s5 := []string{"foo", "bar", "baz"}
+		var Nil []string
+		Empty := []string{}
+		Foo := []string{"foo"}
+		Bar := []string{"bar"}
+		FooBar := []string{"foo", "bar"}
+		FooBarBaz := []string{"foo", "bar", "baz"}
 
-		// SliceAnd(nil|empty, nil|empty) gives nil|empty
-		if e, a := ([]string)(nil), SliceAnd(s1, s1); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{}, SliceAnd(s1, s2); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := ([]string)(nil), SliceAnd(s2, s1); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{}, SliceAnd(s2, s2); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
+		test := func(a, b []string, e1 []string) {
+			t.Helper()
+			if a1 := SliceAnd(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceAnd(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
 		}
 
-		// SliceAnd(nil|empty, [foo]) gives [foo]
-		if e, a := []string{"foo"}, SliceAnd(s1, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo"}, SliceAnd(s2, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo"}, SliceAnd(s3, s1); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo"}, SliceAnd(s3, s2); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(Nil, Nil, Nil)     // nil && nil => nil
+		test(Nil, Empty, Nil)   // nil && [] => nil
+		test(Empty, Nil, Nil)   // [] && nil => nil
+		test(Empty, Empty, Nil) // [] && [] => nil
+		test(Nil, Foo, Nil)     // nil && [foo] => nil
+		test(Empty, Foo, Nil)   // [] && [foo] => nil
+		test(Foo, Nil, Nil)     // [foo] && nil => nil
+		test(Foo, Empty, Nil)   // [foo] && [] => nil
 
-		// SliceAnd([foo bar], [foo]) gives [foo]
-		if e, a := []string{"foo"}, SliceAnd(s4, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo"}, SliceAnd(s3, s4); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(Foo, Bar, Nil) // [foo] && [bar] => nil
+		test(Bar, Foo, Nil) // [foo] && [bar] => nil
 
-		// SliceAnd([foo bar baz], [foo]) gives [foo]
-		if e, a := []string{"foo"}, SliceAnd(s5, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo"}, SliceAnd(s3, s5); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(FooBar, Foo, Foo)    // [foo bar] && [foo] => [foo]
+		test(Foo, FooBar, Foo)    // [foo] && [foo bar] => [foo]
+		test(FooBarBaz, Foo, Foo) // [foo bar baz] && [foo] => [foo]
+		test(Foo, FooBarBaz, Foo) // [foo] && [foo bar baz] => [foo]
 
-		// SliceAnd([foo bar baz], [foo bar]) gives [foo bar]
-		if e, a := []string{"foo", "bar"}, SliceAnd(s4, s5); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo", "bar"}, SliceAnd(s5, s4); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-
-		// SliceAnd([foo bar baz], [foo bar baz]) gives [foo bar baz]
-		if e, a := []string{"foo", "bar", "baz"}, SliceAnd(s5, s5); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo", "bar"}, SliceAnd(s4, s4); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []string{"foo"}, SliceAnd(s3, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(FooBar, FooBarBaz, FooBar)       // [foo bar baz] && [foo bar] => [foo bar]
+		test(FooBarBaz, FooBar, FooBar)       // [foo bar] && [foo bar baz] => [foo bar]
+		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] && [foo bar baz] => [foo bar baz]
+		test(FooBar, FooBar, FooBar)          // [foo bar] && [foo bar] => [foo bar]
+		test(Foo, Foo, Foo)                   // [foo] && [foo] => [foo]
 	})
 
 	// integer
 	tt.Run("int", func(t *testing.T) {
-		var s1 []int
-		s2 := []int{}
-		s3 := []int{123}
-		s4 := []int{123, 456}
-		s5 := []int{123, 456, 789}
+		var Nil []int
+		Empty := []int{}
+		Foo := []int{123}
+		Bar := []int{456}
+		FooBar := []int{123, 456}
+		FooBarBaz := []int{123, 456, 789}
 
-		// SliceAnd(nil|empty, nil|empty) gives nil|empty
-		if e, a := ([]int)(nil), SliceAnd(s1, s1); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{}, SliceAnd(s1, s2); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := ([]int)(nil), SliceAnd(s2, s1); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{}, SliceAnd(s2, s2); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
+		test := func(a, b []int, e1 []int) {
+			t.Helper()
+			if a1 := SliceAnd(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceAnd(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
 		}
 
-		// SliceAnd(nil|empty, [123]) gives [123]
-		if e, a := []int{123}, SliceAnd(s1, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123}, SliceAnd(s2, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123}, SliceAnd(s3, s1); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123}, SliceAnd(s3, s2); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
+		test(Nil, Nil, Nil)     // nil && nil => nil
+		test(Nil, Empty, Nil)   // nil && [] => nil
+		test(Empty, Nil, Nil)   // [] && nil => nil
+		test(Empty, Empty, Nil) // [] && [] => nil
+		test(Nil, Foo, Nil)     // nil && [foo] => nil
+		test(Empty, Foo, Nil)   // [] && [foo] => nil
+		test(Foo, Nil, Nil)     // [foo] && nil => nil
+		test(Foo, Empty, Nil)   // [foo] && [] => nil
+
+		test(Foo, Bar, Nil) // [foo] && [bar] => nil
+		test(Bar, Foo, Nil) // [foo] && [bar] => nil
+
+		test(FooBar, Foo, Foo)    // [foo bar] && [foo] => [foo]
+		test(Foo, FooBar, Foo)    // [foo] && [foo bar] => [foo]
+		test(FooBarBaz, Foo, Foo) // [foo bar baz] && [foo] => [foo]
+		test(Foo, FooBarBaz, Foo) // [foo] && [foo bar baz] => [foo]
+
+		test(FooBar, FooBarBaz, FooBar)       // [foo bar] && [foo bar baz] => [foo bar]
+		test(FooBarBaz, FooBar, FooBar)       // [foo bar baz] && [foo bar] => [foo bar]
+		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] && [foo bar baz] => [foo bar baz]
+		test(FooBar, FooBar, FooBar)          // [foo bar] && [foo bar] => [foo bar]
+		test(Foo, Foo, Foo)                   // [foo] && [foo] => [foo]
+	})
+}
+
+// TestSliceOr unit tests for `SliceOr` function.
+func TestSliceOr(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var Nil []string
+		Empty := []string{}
+		Foo := []string{"foo"}
+		Bar := []string{"bar"}
+		FooBar := []string{"foo", "bar"}
+		BarFoo := []string{"bar", "foo"}
+		FooBarBaz := []string{"foo", "bar", "baz"}
+
+		test := func(a, b []string, e1 []string) {
+			t.Helper()
+			if a1 := SliceOr(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
 		}
 
-		// SliceAnd([123 456], [123]) gives [123]
-		if e, a := []int{123}, SliceAnd(s4, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123}, SliceAnd(s3, s4); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
+		test(Nil, Nil, Nil)     // nil || nil => nil
+		test(Nil, Empty, Nil)   // nil || [] => nil
+		test(Empty, Nil, Nil)   // [] || nil => nil
+		test(Empty, Empty, Nil) // [] || [] => nil
+		test(Nil, Foo, Foo)     // nil || [foo] => [foo]
+		test(Empty, Foo, Foo)   // [] && [foo] => [foo]
+		test(Foo, Nil, Foo)     // [foo] && nil => [foo]
+		test(Foo, Empty, Foo)   // [foo] && [] => [foo]
+
+		test(Foo, Bar, FooBar) // [foo] || [bar] => [foo bar]
+		test(Bar, Foo, BarFoo) // [foo] || [bar] => [bar foo]
+
+		test(FooBar, Foo, FooBar)       // [foo bar] || [foo] => [foo bar]
+		test(Foo, FooBar, FooBar)       // [foo] || [foo bar] => [foo bar]
+		test(FooBarBaz, Foo, FooBarBaz) // [foo bar baz] || [foo] => [foo bar baz]
+		test(Foo, FooBarBaz, FooBarBaz) // [foo] || [foo bar baz] => [foo bar baz]
+
+		test(FooBar, FooBarBaz, FooBarBaz)    // [foo bar] || [foo bar baz] => [foo bar baz]
+		test(FooBarBaz, FooBar, FooBarBaz)    // [foo bar baz] || [foo bar] => [foo bar baz]
+		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] || [foo bar baz] => [foo bar baz]
+		test(FooBar, FooBar, FooBar)          // [foo bar] || [foo bar] => [foo bar]
+		test(Foo, Foo, Foo)                   // [foo] || [foo] => [foo]
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var Nil []int
+		Empty := []int{}
+		Foo := []int{123}
+		Bar := []int{456}
+		FooBar := []int{123, 456}
+		BarFoo := []int{456, 123}
+		FooBarBaz := []int{123, 456, 789}
+
+		test := func(a, b []int, e1 []int) {
+			t.Helper()
+			if a1 := SliceOr(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
 		}
 
-		// SliceAnd([123 456 789], [123]) gives [123]
-		if e, a := []int{123}, SliceAnd(s5, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123}, SliceAnd(s3, s5); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(Nil, Nil, Nil)     // nil || nil => nil
+		test(Nil, Empty, Nil)   // nil || [] => nil
+		test(Empty, Nil, Nil)   // [] || nil => nil
+		test(Empty, Empty, Nil) // [] || [] => nil
+		test(Nil, Foo, Foo)     // nil || [foo] => [foo]
+		test(Empty, Foo, Foo)   // [] && [foo] => [foo]
+		test(Foo, Nil, Foo)     // [foo] && nil => [foo]
+		test(Foo, Empty, Foo)   // [foo] && [] => [foo]
 
-		// SliceAnd([123 456 789], [123 456]) gives [123 456]
-		if e, a := []int{123, 456}, SliceAnd(s4, s5); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123, 456}, SliceAnd(s5, s4); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(Foo, Bar, FooBar) // [foo] || [bar] => [foo bar]
+		test(Bar, Foo, BarFoo) // [foo] || [bar] => [bar foo]
 
-		// SliceAnd([123 456 789], [123 456 789]) gives [123 456 789]
-		if e, a := []int{123, 456, 789}, SliceAnd(s5, s5); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123, 456}, SliceAnd(s4, s4); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
-		if e, a := []int{123}, SliceAnd(s3, s3); !sliceEqual(a, e) {
-			t.Errorf("expected `%v`, found `%v`", e, a)
-		}
+		test(FooBar, Foo, FooBar)       // [foo bar] || [foo] => [foo bar]
+		test(Foo, FooBar, FooBar)       // [foo] || [foo bar] => [foo bar]
+		test(FooBarBaz, Foo, FooBarBaz) // [foo bar baz] || [foo] => [foo bar baz]
+		test(Foo, FooBarBaz, FooBarBaz) // [foo] || [foo bar baz] => [foo bar baz]
+
+		test(FooBar, FooBarBaz, FooBarBaz)    // [foo bar] || [foo bar baz] => [foo bar baz]
+		test(FooBarBaz, FooBar, FooBarBaz)    // [foo bar baz] || [foo bar] => [foo bar baz]
+		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] || [foo bar baz] => [foo bar baz]
+		test(FooBar, FooBar, FooBar)          // [foo bar] || [foo bar] => [foo bar]
+		test(Foo, Foo, Foo)                   // [foo] || [foo] => [foo]
 	})
 }
 
@@ -605,92 +626,100 @@ func TestSliceAnd(tt *testing.T) {
 func TestSliceDiff(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
-		var s1 []string
-		s2 := []string{}
-		s3 := []string{"foo"}
-		s4 := []string{"foo", "bar"}
-		s5 := []string{"foo", "bar", "baz"}
+		var Nil []string
+		Empty := []string{}
+		Foo := []string{"foo"}
+		Bar := []string{"bar"}
+		Baz := []string{"baz"}
+		FooBar := []string{"foo", "bar"}
+		BarBaz := []string{"bar", "baz"}
+		FooBarBaz := []string{"foo", "bar", "baz"}
 
 		test := func(a, b []string, e1, e2 []string) {
 			t.Helper()
 			if a1, a2 := SliceDiff(a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
-				t.Errorf("expected `%v` and `%v`, found `%v` and `%v`", e1, e2, a1, a2)
+				t.Errorf("SliceDiff(`%#v`,`%#v`)=(`%#v`,`%#v`), expected (`%#v`,`%#v`)", a, b, a1, a2, e1, e2)
 			}
 		}
 
-		// SliceDiff([], []) => [], []
-		test(s1, s1, s1, s1)
-		test(s1, s2, s1, s2)
-		test(s2, s1, s2, s1)
-		test(s2, s2, s2, s2)
+		test(Nil, Nil, Nil, Nil)         // diff(nil, nil) => nil, nil
+		test(Nil, Empty, Nil, Empty)     // diff(nil, [])  => nil, []
+		test(Empty, Nil, Empty, Nil)     // diff([], nil)  => [], nil
+		test(Empty, Empty, Empty, Empty) // diff([], [])   => [], []
 
-		// SliceDiff([], [foo]) => [] [foo]
-		test(s1, s3, s1, s3)
-		test(s2, s3, s2, s3)
-		test(s3, s1, s3, s1)
-		test(s3, s2, s3, s2)
+		test(Nil, Foo, Nil, Foo)     // diff(nil, [foo]) => nil, [foo]
+		test(Empty, Foo, Empty, Foo) // diff([], [foo])  => [], [foo]
+		test(Foo, Nil, Foo, Nil)     // diff([foo], nil) => [foo], nil
+		test(Foo, Empty, Foo, Empty) // diff([foo], [])  => [foo], []
 
-		// SliceDiff([foo bar], [foo]) => [bar] []
-		test(s4, s3, []string{"bar"}, s1)
-		test(s3, s4, s1, []string{"bar"})
+		test(Bar, Foo, Bar, Foo) // diff([bar], [foo]) => [bar], [foo]
+		test(Foo, Bar, Foo, Bar) // diff([foo], [bar]) => [foo], [bar]
+		test(Baz, Foo, Baz, Foo) // diff([baz], [foo]) => [baz], [foo]
+		test(Foo, Baz, Foo, Baz) // diff([foo], [baz]) => [foo], [baz]
 
-		// SliceDiff([foo bar baz], [foo]) => [bar baz] []
-		test(s5, s3, []string{"bar", "baz"}, s1)
-		test(s3, s5, s1, []string{"bar", "baz"})
+		test(FooBar, Foo, Bar, Nil)       // diff([foo bar], [foo]) => [bar], nil
+		test(Foo, FooBar, Nil, Bar)       // diff([foo], [foo bar]) => nil, [bar]
+		test(FooBarBaz, Foo, BarBaz, Nil) // diff([foo bar baz], [foo]) => [bar baz], nil
+		test(Foo, FooBarBaz, Nil, BarBaz) // diff([foo], [foo bar baz]) => nil, [bar baz]
 
-		// SliceDiff([foo bar baz], [foo bar]) => [baz] []
-		test(s5, s4, []string{"baz"}, s1)
-		test(s4, s5, s1, []string{"baz"})
+		test(FooBar, BarBaz, Foo, Baz)    // diff([foo bar], [bar baz]) => [foo], [baz]
+		test(BarBaz, FooBar, Baz, Foo)    // diff([bar baz], [foo bar]) => [baz], [foo]
+		test(FooBarBaz, FooBar, Baz, Nil) // diff([foo bar baz], [foo bar]) => [baz], nil
+		test(FooBar, FooBarBaz, Nil, Baz) // diff([foo bar], [foo bar baz]) => nil, [baz]
 
-		// SliceDiff([foo bar baz], [foo bar baz]) => [] []
-		test(s5, s5, s1, s1)
-		test(s4, s4, s1, s1)
-		test(s3, s3, s1, s1)
+		test(FooBarBaz, FooBarBaz, Nil, Nil) // diff([foo bar baz], [foo bar baz]) => nil, nil
+		test(FooBar, FooBar, Nil, Nil)       // diff([foo bar], [foo bar]) => nil, nil
+		test(BarBaz, BarBaz, Nil, Nil)       // diff([bar baz], [bar baz]) => nil, nil
+		test(Foo, Foo, Nil, Nil)             // diff([foo], [foo]) => nil, nil
 	})
 
 	// integer
 	tt.Run("int", func(t *testing.T) {
-		var s1 []int
-		s2 := []int{}
-		s3 := []int{123}
-		s4 := []int{123, 456}
-		s5 := []int{123, 456, 789}
+		var Nil []int
+		Empty := []int{}
+		Foo := []int{123}
+		Bar := []int{456}
+		Baz := []int{789}
+		FooBar := []int{123, 456}
+		BarBaz := []int{456, 789}
+		FooBarBaz := []int{123, 456, 789}
 
 		test := func(a, b []int, e1, e2 []int) {
 			t.Helper()
 			if a1, a2 := SliceDiff(a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
-				t.Errorf("expected `%v` and `%v`, found `%v` and `%v`", e1, e2, a1, a2)
+				t.Errorf("SliceDiff(`%#v`,`%#v`)=(`%#v`,`%#v`), expected (`%#v`,`%#v`)", a, b, a1, a2, e1, e2)
 			}
 		}
 
-		// SliceDiff([], []) => [], []
-		test(s1, s1, s1, s1)
-		test(s1, s2, s1, s2)
-		test(s2, s1, s2, s1)
-		test(s2, s2, s2, s2)
+		test(Nil, Nil, Nil, Nil)         // diff(nil, nil) => nil, nil
+		test(Nil, Empty, Nil, Empty)     // diff(nil, [])  => nil, []
+		test(Empty, Nil, Empty, Nil)     // diff([], nil)  => [], nil
+		test(Empty, Empty, Empty, Empty) // diff([], [])   => [], []
 
-		// SliceDiff([], [123]) => [] [123]
-		test(s1, s3, s1, s3)
-		test(s2, s3, s2, s3)
-		test(s3, s1, s3, s1)
-		test(s3, s2, s3, s2)
+		test(Nil, Foo, Nil, Foo)     // diff(nil, [foo]) => nil, [foo]
+		test(Empty, Foo, Empty, Foo) // diff([], [foo])  => [], [foo]
+		test(Foo, Nil, Foo, Nil)     // diff([foo], nil) => [foo], nil
+		test(Foo, Empty, Foo, Empty) // diff([foo], [])  => [foo], []
 
-		// SliceDiff([123 456], [123]) => [456] []
-		test(s4, s3, []int{456}, s1)
-		test(s3, s4, s1, []int{456})
+		test(Bar, Foo, Bar, Foo) // diff([bar], [foo]) => [bar], [foo]
+		test(Foo, Bar, Foo, Bar) // diff([foo], [bar]) => [foo], [bar]
+		test(Baz, Foo, Baz, Foo) // diff([baz], [foo]) => [baz], [foo]
+		test(Foo, Baz, Foo, Baz) // diff([foo], [baz]) => [foo], [baz]
 
-		// SliceDiff([123 456 789], [123]) => [456 789] []
-		test(s5, s3, []int{456, 789}, s1)
-		test(s3, s5, s1, []int{456, 789})
+		test(FooBar, Foo, Bar, Nil)       // diff([foo bar], [foo]) => [bar], nil
+		test(Foo, FooBar, Nil, Bar)       // diff([foo], [foo bar]) => nil, [bar]
+		test(FooBarBaz, Foo, BarBaz, Nil) // diff([foo bar baz], [foo]) => [bar baz], nil
+		test(Foo, FooBarBaz, Nil, BarBaz) // diff([foo], [foo bar baz]) => nil, [bar baz]
 
-		// SliceDiff([123 456 789], [123 456]) => [789] []
-		test(s5, s4, []int{789}, s1)
-		test(s4, s5, s1, []int{789})
+		test(FooBar, BarBaz, Foo, Baz)    // diff([foo bar], [bar baz]) => [foo], [baz]
+		test(BarBaz, FooBar, Baz, Foo)    // diff([bar baz], [foo bar]) => [baz], [foo]
+		test(FooBarBaz, FooBar, Baz, Nil) // diff([foo bar baz], [foo bar]) => [baz], nil
+		test(FooBar, FooBarBaz, Nil, Baz) // diff([foo bar], [foo bar baz]) => nil, [baz]
 
-		// SliceDiff([123 456 789], [123 456 789]) => [] []
-		test(s5, s5, s1, s1)
-		test(s4, s4, s1, s1)
-		test(s3, s3, s1, s1)
+		test(FooBarBaz, FooBarBaz, Nil, Nil) // diff([foo bar baz], [foo bar baz]) => nil, nil
+		test(FooBar, FooBar, Nil, Nil)       // diff([foo bar], [foo bar]) => nil, nil
+		test(BarBaz, BarBaz, Nil, Nil)       // diff([bar baz], [bar baz]) => nil, nil
+		test(Foo, Foo, Nil, Nil)             // diff([foo], [foo]) => nil, nil
 	})
 }
 
