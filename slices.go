@@ -117,10 +117,50 @@ func SliceAnd[S ~[]E, E comparable](s1 S, s2 S) S {
 
 	out := make(S, 0, len(s2))
 	for _, v := range s2 {
-		if _, ok := seen[v]; ok {
-			out = append(out, v)
+		if _, ok := seen[v]; !ok {
+			continue // skip it
 		}
+		out = append(out, v)
 	}
 
 	return out
+}
+
+// SliceDiff returns the difference between two slices.
+// Where out1 - elements presented in s1 but missing in s2.
+// And out2 - elements presented in s2 but missing in s1.
+func SliceDiff[S ~[]E, E comparable](s1 S, s2 S) (out1 S, out2 S) {
+	if len(s1) == 0 || len(s2) == 0 {
+		return s1, s2
+	}
+
+	// elements seen in s1
+	seen1 := make(map[E]struct{}, len(s1))
+	for _, v := range s1 {
+		seen1[v] = struct{}{}
+	}
+
+	// elements seen in s2
+	seen2 := make(map[E]struct{}, len(s2))
+	for _, v := range s2 {
+		seen2[v] = struct{}{}
+	}
+
+	// presented in s1, missing in s2
+	for _, v := range s1 {
+		if _, ok := seen2[v]; ok {
+			continue // skip it
+		}
+		out1 = append(out1, v)
+	}
+
+	// presented in s2, missing in s1
+	for _, v := range s2 {
+		if _, ok := seen1[v]; ok {
+			continue
+		}
+		out2 = append(out2, v)
+	}
+
+	return
 }

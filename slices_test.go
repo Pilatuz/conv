@@ -596,6 +596,99 @@ func TestSliceAnd(tt *testing.T) {
 	})
 }
 
+// TestSliceDiff unit tests for `SliceDiff` function.
+func TestSliceDiff(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var s1 []string
+		s2 := []string{}
+		s3 := []string{"foo"}
+		s4 := []string{"foo", "bar"}
+		s5 := []string{"foo", "bar", "baz"}
+
+		test := func(a, b []string, e1, e2 []string) {
+			t.Helper()
+			if a1, a2 := SliceDiff(a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
+				t.Errorf("expected `%v` and `%v`, found `%v` and `%v`", e1, e2, a1, a2)
+			}
+		}
+
+		// SliceDiff([], []) => [], []
+		test(s1, s1, s1, s1)
+		test(s1, s2, s1, s2)
+		test(s2, s1, s2, s1)
+		test(s2, s2, s2, s2)
+
+		// SliceDiff([], [foo]) => [] [foo]
+		test(s1, s3, s1, s3)
+		test(s2, s3, s2, s3)
+		test(s3, s1, s3, s1)
+		test(s3, s2, s3, s2)
+
+		// SliceDiff([foo bar], [foo]) => [bar] []
+		test(s4, s3, []string{"bar"}, s1)
+		test(s3, s4, s1, []string{"bar"})
+
+		// SliceDiff([foo bar baz], [foo]) => [bar baz] []
+		test(s5, s3, []string{"bar", "baz"}, s1)
+		test(s3, s5, s1, []string{"bar", "baz"})
+
+		// SliceDiff([foo bar baz], [foo bar]) => [baz] []
+		test(s5, s4, []string{"baz"}, s1)
+		test(s4, s5, s1, []string{"baz"})
+
+		// SliceDiff([foo bar baz], [foo bar baz]) => [] []
+		test(s5, s5, s1, s1)
+		test(s4, s4, s1, s1)
+		test(s3, s3, s1, s1)
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var s1 []int
+		s2 := []int{}
+		s3 := []int{123}
+		s4 := []int{123, 456}
+		s5 := []int{123, 456, 789}
+
+		test := func(a, b []int, e1, e2 []int) {
+			t.Helper()
+			if a1, a2 := SliceDiff(a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
+				t.Errorf("expected `%v` and `%v`, found `%v` and `%v`", e1, e2, a1, a2)
+			}
+		}
+
+		// SliceDiff([], []) => [], []
+		test(s1, s1, s1, s1)
+		test(s1, s2, s1, s2)
+		test(s2, s1, s2, s1)
+		test(s2, s2, s2, s2)
+
+		// SliceDiff([], [123]) => [] [123]
+		test(s1, s3, s1, s3)
+		test(s2, s3, s2, s3)
+		test(s3, s1, s3, s1)
+		test(s3, s2, s3, s2)
+
+		// SliceDiff([123 456], [123]) => [456] []
+		test(s4, s3, []int{456}, s1)
+		test(s3, s4, s1, []int{456})
+
+		// SliceDiff([123 456 789], [123]) => [456 789] []
+		test(s5, s3, []int{456, 789}, s1)
+		test(s3, s5, s1, []int{456, 789})
+
+		// SliceDiff([123 456 789], [123 456]) => [789] []
+		test(s5, s4, []int{789}, s1)
+		test(s4, s5, s1, []int{789})
+
+		// SliceDiff([123 456 789], [123 456 789]) => [] []
+		test(s5, s5, s1, s1)
+		test(s4, s4, s1, s1)
+		test(s3, s3, s1, s1)
+	})
+}
+
 // TestSliceEqual unit tests for `sliceEqual` function.
 func TestSliceEqual(tt *testing.T) {
 	// string
