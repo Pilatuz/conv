@@ -245,3 +245,75 @@ func TestFirstNonNil(tt *testing.T) {
 		}
 	})
 }
+
+// TestCoalesce unit tests for `Coalesce` function.
+func TestCoalesce(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var p1 *string
+		var p2 string
+		p3 := "foo"
+
+		if e, a := (*string)(nil), Coalesce(p1, nil, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := &p2, Coalesce(p1, &p2, &p3, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := &p3, Coalesce(p1, &p3, &p2, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := p3, Coalesce("", p2, p3, ""); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var p1 *int
+		var p2 int
+		p3 := 123
+
+		if e, a := (*int)(nil), Coalesce(p1, nil, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := &p2, Coalesce(p1, &p2, &p3, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := &p3, Coalesce(p1, &p3, &p2, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := p3, Coalesce(0, p2, p3, 0); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// boolean
+	tt.Run("bool", func(t *testing.T) {
+		var p1 *bool
+		var p2 bool
+		p3 := true
+
+		if e, a := (*bool)(nil), Coalesce(p1, nil, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := &p2, Coalesce(p1, &p2, &p3, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := &p3, Coalesce(p1, &p3, &p2, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := p3, Coalesce(false, p2, p3, false); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}

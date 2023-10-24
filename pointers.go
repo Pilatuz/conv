@@ -51,3 +51,23 @@ func FirstNonNil[T any](pp ...*T) *T {
 
 	return nil // all nil
 }
+
+// Coalesce gets first non-empty value.
+// Similar to [FirstNonNil] but works with any types, not just pointers.
+func Coalesce[T comparable](vv ...T) T {
+	out, _ := CoalesceEx(vv...)
+	return out // ignore OK status
+}
+
+// CoalesceEx gets first non-empty value with OK status.
+func CoalesceEx[T comparable](vv ...T) (out T, ok bool) {
+	for _, v := range vv {
+		if v == out {
+			continue // is empty
+		}
+
+		return v, true
+	}
+
+	return // out, false
+}

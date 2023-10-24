@@ -49,4 +49,8 @@
 //	})
 //
 // There are also a few useful slice helpers, see [Slice], [Unique] and [Reverse].
+// The [SliceAnd], [SliceOr], [SliceSub], [SliceDiff] functions can be used to work
+// with slices as sets.
+//
+// Also take a look at useful [Coalesce] and [ErrorsAs] functions.
 package conv

@@ -144,6 +144,15 @@ func ExampleFirstNonNil() {
 	// foo
 }
 
+func ExampleCoalesce() {
+	var a, c int
+	b := 123
+
+	fmt.Println(conv.Coalesce(0, a, b, c, 0))
+	// Output:
+	// 123
+}
+
 func ExampleErrorAs() {
 	err := &net.ParseError{Type: "typ", Text: "txt"}
 	netErr, ok := conv.ErrorsAs[*net.ParseError](err)
