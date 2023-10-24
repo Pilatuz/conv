@@ -2,6 +2,7 @@ package conv_test
 
 import (
 	"fmt"
+	"net"
 	"sync"
 
 	"github.com/Pilatuz/conv"
@@ -90,7 +91,8 @@ func ExampleUnique() {
 
 func ExampleReverse() {
 	s := conv.Slice(1, 2, 3, 4)
-	fmt.Println(conv.Reverse(s))
+	conv.Reverse(s)
+	fmt.Println(s)
 	// Output:
 	// [4 3 2 1]
 }
@@ -140,4 +142,12 @@ func ExampleFirstNonNil() {
 	fmt.Println(*conv.FirstNonNil(a, b, c, d))
 	// Output:
 	// foo
+}
+
+func ExampleErrorAs() {
+	err := &net.ParseError{Type: "typ", Text: "txt"}
+	netErr, ok := conv.ErrorsAs[*net.ParseError](err)
+	fmt.Println(netErr, ok)
+	// Output:
+	// invalid typ: txt true
 }
