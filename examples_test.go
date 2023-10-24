@@ -2,6 +2,7 @@ package conv_test
 
 import (
 	"fmt"
+	"net"
 	"sync"
 
 	"github.com/Pilatuz/conv"
@@ -140,4 +141,12 @@ func ExampleFirstNonNil() {
 	fmt.Println(*conv.FirstNonNil(a, b, c, d))
 	// Output:
 	// foo
+}
+
+func ExampleErrorAs() {
+	err := &net.ParseError{Type: "typ", Text: "txt"}
+	netErr, ok := conv.ErrorsAs[*net.ParseError](err)
+	fmt.Println(netErr, ok)
+	// Output:
+	// invalid typ: txt true
 }
