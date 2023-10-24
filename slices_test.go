@@ -449,6 +449,153 @@ func TestReverse(tt *testing.T) {
 	})
 }
 
+// TestSliceAnd unit tests for `SliceAnd` function.
+func TestSliceAnd(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var s1 []string
+		s2 := []string{}
+		s3 := []string{"foo"}
+		s4 := []string{"foo", "bar"}
+		s5 := []string{"foo", "bar", "baz"}
+
+		// SliceAnd(nil|empty, nil|empty) gives nil|empty
+		if e, a := ([]string)(nil), SliceAnd(s1, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{}, SliceAnd(s1, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := ([]string)(nil), SliceAnd(s2, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{}, SliceAnd(s2, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd(nil|empty, [foo]) gives [foo]
+		if e, a := []string{"foo"}, SliceAnd(s1, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo"}, SliceAnd(s2, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo"}, SliceAnd(s3, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo"}, SliceAnd(s3, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([foo bar], [foo]) gives [foo]
+		if e, a := []string{"foo"}, SliceAnd(s4, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo"}, SliceAnd(s3, s4); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([foo bar baz], [foo]) gives [foo]
+		if e, a := []string{"foo"}, SliceAnd(s5, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo"}, SliceAnd(s3, s5); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([foo bar baz], [foo bar]) gives [foo bar]
+		if e, a := []string{"foo", "bar"}, SliceAnd(s4, s5); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo", "bar"}, SliceAnd(s5, s4); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([foo bar baz], [foo bar baz]) gives [foo bar baz]
+		if e, a := []string{"foo", "bar", "baz"}, SliceAnd(s5, s5); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo", "bar"}, SliceAnd(s4, s4); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []string{"foo"}, SliceAnd(s3, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var s1 []int
+		s2 := []int{}
+		s3 := []int{123}
+		s4 := []int{123, 456}
+		s5 := []int{123, 456, 789}
+
+		// SliceAnd(nil|empty, nil|empty) gives nil|empty
+		if e, a := ([]int)(nil), SliceAnd(s1, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{}, SliceAnd(s1, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := ([]int)(nil), SliceAnd(s2, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{}, SliceAnd(s2, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd(nil|empty, [123]) gives [123]
+		if e, a := []int{123}, SliceAnd(s1, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123}, SliceAnd(s2, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123}, SliceAnd(s3, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123}, SliceAnd(s3, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([123 456], [123]) gives [123]
+		if e, a := []int{123}, SliceAnd(s4, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123}, SliceAnd(s3, s4); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([123 456 789], [123]) gives [123]
+		if e, a := []int{123}, SliceAnd(s5, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123}, SliceAnd(s3, s5); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([123 456 789], [123 456]) gives [123 456]
+		if e, a := []int{123, 456}, SliceAnd(s4, s5); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123, 456}, SliceAnd(s5, s4); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceAnd([123 456 789], [123 456 789]) gives [123 456 789]
+		if e, a := []int{123, 456, 789}, SliceAnd(s5, s5); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123, 456}, SliceAnd(s4, s4); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+		if e, a := []int{123}, SliceAnd(s3, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
 // TestSliceEqual unit tests for `sliceEqual` function.
 func TestSliceEqual(tt *testing.T) {
 	// string

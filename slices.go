@@ -98,3 +98,29 @@ func Reverse[S ~[]E, E any](s S) S {
 
 	return s // the same
 }
+
+// SliceAnd returns the intersection between two slices.
+// I.e. elements presented in both slices.
+func SliceAnd[S ~[]E, E comparable](s1 S, s2 S) S {
+	if len(s1) == 0 {
+		return s2
+	}
+	if len(s2) == 0 {
+		return s1
+	}
+
+	// all elements seen in s1
+	seen := make(map[E]struct{}, len(s1))
+	for _, v := range s1 {
+		seen[v] = struct{}{}
+	}
+
+	out := make(S, 0, len(s2))
+	for _, v := range s2 {
+		if _, ok := seen[v]; ok {
+			out = append(out, v)
+		}
+	}
+
+	return out
+}
