@@ -470,6 +470,9 @@ func TestSliceAnd(tt *testing.T) {
 			if a1 := SliceAnd(a, b); !sliceEqual(a1, e1) {
 				t.Errorf("SliceAnd(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
 			}
+			if a1 := SliceAndBy(func(v string) string { return v }, a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceAnd(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
 		}
 
 		test(Nil, Nil, Nil)     // nil && nil => nil
@@ -508,6 +511,9 @@ func TestSliceAnd(tt *testing.T) {
 		test := func(a, b []int, e1 []int) {
 			t.Helper()
 			if a1 := SliceAnd(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceAnd(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
+			if a1 := SliceAndBy(func(v int) int { return v }, a, b); !sliceEqual(a1, e1) {
 				t.Errorf("SliceAnd(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
 			}
 		}
@@ -554,6 +560,9 @@ func TestSliceOr(tt *testing.T) {
 			if a1 := SliceOr(a, b); !sliceEqual(a1, e1) {
 				t.Errorf("SliceOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
 			}
+			if a1 := SliceOrBy(func(v string) string { return v }, a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
 		}
 
 		test(Nil, Nil, Nil)     // nil || nil => nil
@@ -593,6 +602,9 @@ func TestSliceOr(tt *testing.T) {
 		test := func(a, b []int, e1 []int) {
 			t.Helper()
 			if a1 := SliceOr(a, b); !sliceEqual(a1, e1) {
+				t.Errorf("SliceOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			}
+			if a1 := SliceOrBy(func(v int) int { return v }, a, b); !sliceEqual(a1, e1) {
 				t.Errorf("SliceOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
 			}
 		}
@@ -638,6 +650,9 @@ func TestSliceDiff(tt *testing.T) {
 		test := func(a, b []string, e1, e2 []string) {
 			t.Helper()
 			if a1, a2 := SliceDiff(a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
+				t.Errorf("SliceDiff(`%#v`,`%#v`)=(`%#v`,`%#v`), expected (`%#v`,`%#v`)", a, b, a1, a2, e1, e2)
+			}
+			if a1, a2 := SliceDiffBy(func(v string) string { return v }, a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
 				t.Errorf("SliceDiff(`%#v`,`%#v`)=(`%#v`,`%#v`), expected (`%#v`,`%#v`)", a, b, a1, a2, e1, e2)
 			}
 		}
@@ -687,6 +702,9 @@ func TestSliceDiff(tt *testing.T) {
 		test := func(a, b []int, e1, e2 []int) {
 			t.Helper()
 			if a1, a2 := SliceDiff(a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
+				t.Errorf("SliceDiff(`%#v`,`%#v`)=(`%#v`,`%#v`), expected (`%#v`,`%#v`)", a, b, a1, a2, e1, e2)
+			}
+			if a1, a2 := SliceDiffBy(func(v int) int { return v }, a, b); !sliceEqual(a1, e1) || !sliceEqual(a2, e2) {
 				t.Errorf("SliceDiff(`%#v`,`%#v`)=(`%#v`,`%#v`), expected (`%#v`,`%#v`)", a, b, a1, a2, e1, e2)
 			}
 		}
