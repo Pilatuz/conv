@@ -40,16 +40,9 @@ func OmitEmpty[T comparable](p *T) *T {
 }
 
 // FirstNonNil gets first non-nil pointer.
-//
 // It works similar to SQL COALESCE function.
 func FirstNonNil[T any](pp ...*T) *T {
-	for _, p := range pp {
-		if p != nil {
-			return p // found
-		}
-	}
-
-	return nil // all nil
+	return Coalesce(pp...)
 }
 
 // Coalesce gets first non-empty value.
