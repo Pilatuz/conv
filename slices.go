@@ -97,6 +97,20 @@ func Reverse[S ~[]E, E any](s S) {
 	}
 }
 
+// SliceTransform transforms each element of slice.
+func SliceTransform[S ~[]E, E any, T any](fn func(E) T, s S) []T {
+	if s == nil {
+		return nil
+	}
+
+	out := make([]T, 0, len(s))
+	for _, v := range s {
+		out = append(out, fn(v))
+	}
+
+	return out
+}
+
 // me uses element itself as a trivial key.
 // Likely this function should be copmletely inlined by compiler.
 func me[K comparable](v K) K {

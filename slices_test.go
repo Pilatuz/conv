@@ -1,6 +1,7 @@
 package conv_test
 
 import (
+	"strconv"
 	"testing"
 
 	. "github.com/Pilatuz/conv"
@@ -449,6 +450,61 @@ func TestReverse(tt *testing.T) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 		if e, a := []bool{false, true, true}, s5; !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
+// TestSliceTransform unit tests for `SliceTransform` function.
+func TestSliceTransform(tt *testing.T) {
+	// string => int
+	tt.Run("str_int", func(t *testing.T) {
+		var s1 []string
+		s2 := []string{}
+		s3 := []string{"123", "456"}
+
+		fn := func(s string) int {
+			return Must(strconv.Atoi(s))
+		}
+
+		// SliceTransform(nil) gives nil
+		if e, a := ([]int)(nil), SliceTransform(fn, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceTransform([]) gives empty slice
+		if e, a := []int{}, SliceTransform(fn, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceTransform(["a", "b", ...]) gives slice [a, b, ...]
+		if e, a := []int{123, 456}, SliceTransform(fn, s3); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// string => boolean
+	tt.Run("str_bool", func(t *testing.T) {
+		var s1 []string
+		s2 := []string{}
+		s3 := []string{"false", "true"}
+
+		fn := func(s string) bool {
+			return Must(strconv.ParseBool(s))
+		}
+
+		// SliceTransform(nil) gives nil
+		if e, a := ([]bool)(nil), SliceTransform(fn, s1); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceTransform([]) gives empty slice
+		if e, a := []bool{}, SliceTransform(fn, s2); !sliceEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceTransform(["a", "b", ...]) gives slice [a, b, ...]
+		if e, a := []bool{false, true}, SliceTransform(fn, s3); !sliceEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
