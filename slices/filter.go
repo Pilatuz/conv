@@ -20,7 +20,7 @@ func filter[S ~[]E, E any](initFn func(S) S, condFn func(E) bool, s S) S {
 		return nil
 	}
 
-	out := initFn(s)
+	out := initFn(s) // copy or share
 	for _, v := range s {
 		if !condFn(v) {
 			continue // skip it

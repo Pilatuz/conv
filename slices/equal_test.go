@@ -37,7 +37,7 @@ func same[S ~[]E, E any](a, b S) bool {
 	// check address of the latest element:
 	A, B := cap(a), cap(b)
 	return A > 0 && B > 0 &&
-		&a[0:A][A-1] == &b[0:B][B-1]
+		&a[:A][A-1] == &b[:B][B-1]
 }
 
 // TestEqual unit tests for `equal` helper.
