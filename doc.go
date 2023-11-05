@@ -48,9 +48,12 @@
 //		Type:     conv.PtrFrom(TypeInternal),
 //	})
 //
-// There are also a few useful slice helpers, see [Slice], [Unique] and [Reverse].
-// The [SliceAnd], [SliceOr], [SliceSub], [SliceDiff] functions can be used to work
-// with slices as sets.
+// There are also a few useful slice helpers.
+// You can use [Slice] function to create slice from a set of values:
+//
+//	list := conv.Slice("foo", "bar")
+//
+// Here list is a slice of strings containing two elements: "foo" and "bar".
 //
 // Also take a look at useful [Coalesce] and [ErrorsAs] functions.
 package conv

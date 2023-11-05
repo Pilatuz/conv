@@ -3,7 +3,6 @@ package conv_test
 import (
 	"fmt"
 	"net"
-	"sync"
 
 	"github.com/Pilatuz/conv"
 )
@@ -20,56 +19,6 @@ func ExampleSlice() {
 	// [foo bar baz]
 }
 
-func ExampleSliceNotNil() {
-	var s []string
-	s = conv.SliceNotNil(s)
-	if s == nil {
-		fmt.Println("<nil>")
-	} else {
-		fmt.Println("[]")
-	}
-	// Output:
-	// []
-}
-
-func ExampleSliceJoin() {
-	s := conv.SliceJoin(
-		conv.Slice("foo", "bar"),
-		conv.Slice("baz"))
-	fmt.Println(s)
-	// Output:
-	// [foo bar baz]
-}
-
-func ExampleSliceFromChan() {
-	wg := &sync.WaitGroup{}
-	errCh := make(chan error)
-
-	wg.Add(3)
-	go func() {
-		defer wg.Done()
-		errCh <- nil
-	}()
-	go func() {
-		defer wg.Done()
-		errCh <- nil
-	}()
-	go func() {
-		defer wg.Done()
-		errCh <- nil
-	}()
-
-	go func() {
-		wg.Wait()
-		close(errCh)
-	}()
-
-	res := conv.SliceFromChan(errCh)
-	fmt.Println(res)
-	// Output:
-	// [<nil> <nil> <nil>]
-}
-
 func ExampleMapNotNil() {
 	var m map[string]string
 	m = conv.MapNotNil(m)
@@ -80,21 +29,6 @@ func ExampleMapNotNil() {
 	}
 	// Output:
 	// {}
-}
-
-func ExampleUnique() {
-	s := conv.Slice(4, 1, 2, 1, 2, 3, 2, 1)
-	fmt.Println(conv.Unique(s))
-	// Output:
-	// [4 1 2 3]
-}
-
-func ExampleReverse() {
-	s := conv.Slice(1, 2, 3, 4)
-	conv.Reverse(s)
-	fmt.Println(s)
-	// Output:
-	// [4 3 2 1]
 }
 
 func ExamplePtrFrom() {
