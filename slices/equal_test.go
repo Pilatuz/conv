@@ -1,6 +1,10 @@
 package slices_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/Pilatuz/conv/slices"
+)
 
 // equal checks if two slices are equal.
 func equal[S ~[]E, E comparable](a, b S) bool {
@@ -60,11 +64,11 @@ func TestEqual(tt *testing.T) {
 		test(Empty, Nil, false)  // [] != nil
 		test(Empty, Empty, true) // [] == []
 
-		test(Empty, Foo, false)     // [] != [foo]
-		test(Foo, Empty, false)     // [foo] != []
-		test(Foo, Foo, true)        // [foo] == [foo]
-		test(Foo, clone(Foo), true) // [foo] == [foo]
-		test(clone(Foo), Foo, true) // [foo] == [foo]
+		test(Empty, Foo, false)            // [] != [foo]
+		test(Foo, Empty, false)            // [foo] != []
+		test(Foo, Foo, true)               // [foo] == [foo]
+		test(Foo, slices.Clone(Foo), true) // [foo] == [foo]
+		test(slices.Clone(Foo), Foo, true) // [foo] == [foo]
 
 		test(Foo, Bar, false)       // [foo] != [bar]
 		test(Foo, FooBar, false)    // [foo] != [foo bar]
@@ -93,11 +97,11 @@ func TestEqual(tt *testing.T) {
 		test(Empty, Nil, false)  // [] != nil
 		test(Empty, Empty, true) // [] == []
 
-		test(Empty, Foo, false)     // [] != [foo]
-		test(Foo, Empty, false)     // [foo] != []
-		test(Foo, Foo, true)        // [foo] == [foo]
-		test(Foo, clone(Foo), true) // [foo] == [foo]
-		test(clone(Foo), Foo, true) // [foo] == [foo]
+		test(Empty, Foo, false)            // [] != [foo]
+		test(Foo, Empty, false)            // [foo] != []
+		test(Foo, Foo, true)               // [foo] == [foo]
+		test(Foo, slices.Clone(Foo), true) // [foo] == [foo]
+		test(slices.Clone(Foo), Foo, true) // [foo] == [foo]
 
 		test(Foo, Bar, false)       // [foo] != [bar]
 		test(Foo, FooBar, false)    // [foo] != [foo bar]
@@ -129,11 +133,11 @@ func TestSame(tt *testing.T) {
 		test(Empty, Nil, false)   // [] != nil
 		test(Empty, Empty, false) // [] != []
 
-		test(Empty, Foo, false)      // [] != [foo]
-		test(Foo, Empty, false)      // [foo] != []
-		test(Foo, Foo, true)         // [foo] == [foo]
-		test(Foo, clone(Foo), false) // [foo] != [foo]*
-		test(clone(Foo), Foo, false) // [foo]* != [foo]
+		test(Empty, Foo, false)             // [] != [foo]
+		test(Foo, Empty, false)             // [foo] != []
+		test(Foo, Foo, true)                // [foo] == [foo]
+		test(Foo, slices.Clone(Foo), false) // [foo] != [foo]*
+		test(slices.Clone(Foo), Foo, false) // [foo]* != [foo]
 
 		test(Foo, Bar, false)       // [foo] != [bar]
 		test(Foo, FooBar, false)    // [foo] != [foo bar]
@@ -162,11 +166,11 @@ func TestSame(tt *testing.T) {
 		test(Empty, Nil, false)   // [] != nil
 		test(Empty, Empty, false) // [] != []
 
-		test(Empty, Foo, false)      // [] != [foo]
-		test(Foo, Empty, false)      // [foo] != []
-		test(Foo, Foo, true)         // [foo] == [foo]
-		test(Foo, clone(Foo), false) // [foo] == [foo]*
-		test(clone(Foo), Foo, false) // [foo]* == [foo]
+		test(Empty, Foo, false)             // [] != [foo]
+		test(Foo, Empty, false)             // [foo] != []
+		test(Foo, Foo, true)                // [foo] == [foo]
+		test(Foo, slices.Clone(Foo), false) // [foo] == [foo]*
+		test(slices.Clone(Foo), Foo, false) // [foo]* == [foo]
 
 		test(Foo, Bar, false)       // [foo] != [bar]
 		test(Foo, FooBar, false)    // [foo] != [foo bar]

@@ -2,16 +2,9 @@ package slices_test
 
 import (
 	"testing"
+
+	"github.com/Pilatuz/conv/slices"
 )
-
-// clone makes copy of slice.
-func clone[S ~[]E, E any](s S) S {
-	if s == nil {
-		return nil
-	}
-
-	return append(S{}, s...)
-}
 
 // TestClone unit tests for `clone` helper.
 func TestClone(tt *testing.T) {
@@ -25,7 +18,7 @@ func TestClone(tt *testing.T) {
 		test := func(a []string) {
 			t.Helper()
 
-			if b := clone(a); same(a, b) || !equal(a, b) {
+			if b := slices.Clone(a); same(a, b) || !equal(a, b) {
 				t.Errorf("clone(`%#v`)=`%#v`, expected `%#v`", a, b, a)
 			}
 		}
@@ -46,7 +39,7 @@ func TestClone(tt *testing.T) {
 		test := func(a []int) {
 			t.Helper()
 
-			if b := clone(a); same(a, b) || !equal(a, b) {
+			if b := slices.Clone(a); same(a, b) || !equal(a, b) {
 				t.Errorf("clone(`%#v`)=`%#v`, expected `%#v`", a, b, a)
 			}
 		}
