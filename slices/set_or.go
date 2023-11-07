@@ -9,6 +9,13 @@ func SetOr[S ~[]E, E comparable](ss ...S) S {
 // SetOrBy returns the union between two (or more) sets by custom key.
 // I.e. unique elements presented in at least one slice.
 func SetOrBy[S ~[]E, E any, K comparable](byFn func(E) K, ss ...S) S {
+	switch len(ss) {
+	case 0: // no slices
+		return nil
+	case 1: // only one slice
+		return ss[0] // as is // Clone(ss[0])?
+	}
+
 	// all elements seen so far
 	seen := make(map[K]struct{})
 

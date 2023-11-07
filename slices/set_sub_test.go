@@ -29,14 +29,14 @@ func TestSetSub(tt *testing.T) {
 			}
 		}
 
-		test(Nil, Nil, Nil)     // nil - nil => nil
-		test(Nil, Empty, Nil)   // nil - [] => nil
-		test(Empty, Nil, Nil)   // [] - nil => nil
-		test(Empty, Empty, Nil) // [] - [] => nil
-		test(Nil, Foo, Nil)     // nil - [foo] => nil
-		test(Empty, Foo, Nil)   // [] - [foo] => nil
-		test(Foo, Nil, Foo)     // [foo] - nil => [foo]
-		test(Foo, Empty, Foo)   // [foo] - [] => [foo]
+		test(Nil, Nil, Nil)       // nil - nil => nil
+		test(Nil, Empty, Nil)     // nil - [] => nil
+		test(Empty, Nil, Empty)   // [] - nil => []
+		test(Empty, Empty, Empty) // [] - [] => []
+		test(Nil, Foo, Nil)       // nil - [foo] => nil
+		test(Empty, Foo, Nil)     // [] - [foo] => nil
+		test(Foo, Nil, Foo)       // [foo] - nil => [foo]
+		test(Foo, Empty, Foo)     // [foo] - [] => [foo]
 
 		test(Foo, Bar, Foo) // [foo] - [bar] => [foo]
 		test(Bar, Foo, Bar) // [bar] - [foo] => [bar]
@@ -75,14 +75,14 @@ func TestSetSub(tt *testing.T) {
 			}
 		}
 
-		test(Nil, Nil, Nil)     // nil - nil => nil
-		test(Nil, Empty, Nil)   // nil - [] => nil
-		test(Empty, Nil, Nil)   // [] - nil => nil
-		test(Empty, Empty, Nil) // [] - [] => nil
-		test(Nil, Foo, Nil)     // nil - [foo] => nil
-		test(Empty, Foo, Nil)   // [] - [foo] => nil
-		test(Foo, Nil, Foo)     // [foo] - nil => [foo]
-		test(Foo, Empty, Foo)   // [foo] - [] => [foo]
+		test(Nil, Nil, Nil)       // nil - nil => nil
+		test(Nil, Empty, Nil)     // nil - [] => nil
+		test(Empty, Nil, Empty)   // [] - nil => []
+		test(Empty, Empty, Empty) // [] - [] => []
+		test(Nil, Foo, Nil)       // nil - [foo] => nil
+		test(Empty, Foo, Nil)     // [] - [foo] => nil
+		test(Foo, Nil, Foo)       // [foo] - nil => [foo]
+		test(Foo, Empty, Foo)     // [foo] - [] => [foo]
 
 		test(Foo, Bar, Foo) // [foo] - [bar] => [foo]
 		test(Bar, Foo, Bar) // [bar] - [foo] => [bar]

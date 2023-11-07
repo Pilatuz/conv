@@ -18,38 +18,43 @@ func TestSetOr(tt *testing.T) {
 		BarFoo := []string{"bar", "foo"}
 		FooBarBaz := []string{"foo", "bar", "baz"}
 
-		test := func(a, b []string, e1 []string) {
+		test := func(expected []string, input ...[]string) {
 			t.Helper()
-			if a1 := slices.SetOr(a, b); !equal(a1, e1) {
-				t.Errorf("SetOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			if actual := slices.SetOr(input...); !equal(actual, expected) {
+				t.Errorf("SetOr(`%#v`)=`%#v`, expected `%#v`", input, actual, expected)
 			}
-			if a1 := slices.SetOrBy(func(v string) string { return v }, a, b); !equal(a1, e1) {
-				t.Errorf("SetOrBy(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			if actual := slices.SetOrBy(func(v string) string { return v }, input...); !equal(actual, expected) {
+				t.Errorf("SetOrBy(`%#v`)=`%#v`, expected `%#v`", input, actual, expected)
 			}
 		}
 
 		test(Nil, Nil, Nil)     // nil || nil => nil
-		test(Nil, Empty, Nil)   // nil || [] => nil
-		test(Empty, Nil, Nil)   // [] || nil => nil
-		test(Empty, Empty, Nil) // [] || [] => nil
-		test(Nil, Foo, Foo)     // nil || [foo] => [foo]
-		test(Empty, Foo, Foo)   // [] && [foo] => [foo]
-		test(Foo, Nil, Foo)     // [foo] && nil => [foo]
-		test(Foo, Empty, Foo)   // [foo] && [] => [foo]
+		test(Nil, Nil, Empty)   // nil || [] => nil
+		test(Nil, Empty, Nil)   // [] || nil => nil
+		test(Nil, Empty, Empty) // [] || [] => nil
+		test(Foo, Nil, Foo)     // nil || [foo] => [foo]
+		test(Foo, Empty, Foo)   // [] && [foo] => [foo]
+		test(Foo, Foo, Nil)     // [foo] && nil => [foo]
+		test(Foo, Foo, Empty)   // [foo] && [] => [foo]
 
-		test(Foo, Bar, FooBar) // [foo] || [bar] => [foo bar]
-		test(Bar, Foo, BarFoo) // [foo] || [bar] => [bar foo]
+		test(FooBar, Foo, Bar) // [foo] || [bar] => [foo bar]
+		test(BarFoo, Bar, Foo) // [foo] || [bar] => [bar foo]
 
-		test(FooBar, Foo, FooBar)       // [foo bar] || [foo] => [foo bar]
-		test(Foo, FooBar, FooBar)       // [foo] || [foo bar] => [foo bar]
-		test(FooBarBaz, Foo, FooBarBaz) // [foo bar baz] || [foo] => [foo bar baz]
-		test(Foo, FooBarBaz, FooBarBaz) // [foo] || [foo bar baz] => [foo bar baz]
+		test(FooBar, FooBar, Foo)       // [foo bar] || [foo] => [foo bar]
+		test(FooBar, Foo, FooBar)       // [foo] || [foo bar] => [foo bar]
+		test(FooBarBaz, FooBarBaz, Foo) // [foo bar baz] || [foo] => [foo bar baz]
+		test(FooBarBaz, Foo, FooBarBaz) // [foo] || [foo bar baz] => [foo bar baz]
 
-		test(FooBar, FooBarBaz, FooBarBaz)    // [foo bar] || [foo bar baz] => [foo bar baz]
-		test(FooBarBaz, FooBar, FooBarBaz)    // [foo bar baz] || [foo bar] => [foo bar baz]
+		test(FooBarBaz, FooBar, FooBarBaz)    // [foo bar] || [foo bar baz] => [foo bar baz]
+		test(FooBarBaz, FooBarBaz, FooBar)    // [foo bar baz] || [foo bar] => [foo bar baz]
 		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] || [foo bar baz] => [foo bar baz]
 		test(FooBar, FooBar, FooBar)          // [foo bar] || [foo bar] => [foo bar]
 		test(Foo, Foo, Foo)                   // [foo] || [foo] => [foo]
+
+		test(Nil)
+		test(Empty, Empty)
+		test(Foo, Foo, Foo, Empty, Nil)
+		test(FooBar, Nil, Empty, Foo, Empty, Bar, Empty, Nil, FooBar)
 	})
 
 	// integer
@@ -62,37 +67,42 @@ func TestSetOr(tt *testing.T) {
 		BarFoo := []int{456, 123}
 		FooBarBaz := []int{123, 456, 789}
 
-		test := func(a, b []int, e1 []int) {
+		test := func(expected []int, input ...[]int) {
 			t.Helper()
-			if a1 := slices.SetOr(a, b); !equal(a1, e1) {
-				t.Errorf("SetOr(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			if actual := slices.SetOr(input...); !equal(actual, expected) {
+				t.Errorf("SetOr(`%#v`)=`%#v`, expected `%#v`", input, actual, expected)
 			}
-			if a1 := slices.SetOrBy(func(v int) int { return v }, a, b); !equal(a1, e1) {
-				t.Errorf("SetOrBy(`%#v`,`%#v`)=`%#v`, expected `%#v`", a, b, a1, e1)
+			if actual := slices.SetOrBy(func(v int) int { return v }, input...); !equal(actual, expected) {
+				t.Errorf("SetOrBy(`%#v`)=`%#v`, expected `%#v`", input, actual, expected)
 			}
 		}
 
 		test(Nil, Nil, Nil)     // nil || nil => nil
-		test(Nil, Empty, Nil)   // nil || [] => nil
-		test(Empty, Nil, Nil)   // [] || nil => nil
-		test(Empty, Empty, Nil) // [] || [] => nil
-		test(Nil, Foo, Foo)     // nil || [foo] => [foo]
-		test(Empty, Foo, Foo)   // [] && [foo] => [foo]
-		test(Foo, Nil, Foo)     // [foo] && nil => [foo]
-		test(Foo, Empty, Foo)   // [foo] && [] => [foo]
+		test(Nil, Nil, Empty)   // nil || [] => nil
+		test(Nil, Empty, Nil)   // [] || nil => nil
+		test(Nil, Empty, Empty) // [] || [] => nil
+		test(Foo, Nil, Foo)     // nil || [foo] => [foo]
+		test(Foo, Empty, Foo)   // [] && [foo] => [foo]
+		test(Foo, Foo, Nil)     // [foo] && nil => [foo]
+		test(Foo, Foo, Empty)   // [foo] && [] => [foo]
 
-		test(Foo, Bar, FooBar) // [foo] || [bar] => [foo bar]
-		test(Bar, Foo, BarFoo) // [foo] || [bar] => [bar foo]
+		test(FooBar, Foo, Bar) // [foo] || [bar] => [foo bar]
+		test(BarFoo, Bar, Foo) // [foo] || [bar] => [bar foo]
 
-		test(FooBar, Foo, FooBar)       // [foo bar] || [foo] => [foo bar]
-		test(Foo, FooBar, FooBar)       // [foo] || [foo bar] => [foo bar]
-		test(FooBarBaz, Foo, FooBarBaz) // [foo bar baz] || [foo] => [foo bar baz]
-		test(Foo, FooBarBaz, FooBarBaz) // [foo] || [foo bar baz] => [foo bar baz]
+		test(FooBar, FooBar, Foo)       // [foo bar] || [foo] => [foo bar]
+		test(FooBar, Foo, FooBar)       // [foo] || [foo bar] => [foo bar]
+		test(FooBarBaz, FooBarBaz, Foo) // [foo bar baz] || [foo] => [foo bar baz]
+		test(FooBarBaz, Foo, FooBarBaz) // [foo] || [foo bar baz] => [foo bar baz]
 
-		test(FooBar, FooBarBaz, FooBarBaz)    // [foo bar] || [foo bar baz] => [foo bar baz]
-		test(FooBarBaz, FooBar, FooBarBaz)    // [foo bar baz] || [foo bar] => [foo bar baz]
+		test(FooBarBaz, FooBar, FooBarBaz)    // [foo bar] || [foo bar baz] => [foo bar baz]
+		test(FooBarBaz, FooBarBaz, FooBar)    // [foo bar baz] || [foo bar] => [foo bar baz]
 		test(FooBarBaz, FooBarBaz, FooBarBaz) // [foo bar baz] || [foo bar baz] => [foo bar baz]
 		test(FooBar, FooBar, FooBar)          // [foo bar] || [foo bar] => [foo bar]
 		test(Foo, Foo, Foo)                   // [foo] || [foo] => [foo]
+
+		test(Nil)
+		test(Empty, Empty)
+		test(Foo, Foo, Foo, Empty, Nil)
+		test(FooBar, Nil, Empty, Foo, Empty, Bar, Empty, Nil, FooBar)
 	})
 }

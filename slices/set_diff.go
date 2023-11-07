@@ -12,7 +12,7 @@ func SetDiff[S ~[]E, E comparable](s1 S, s2 S) (out1 S, out2 S) {
 // And out2 - elements presented in s2 but missing in s1.
 func SetDiffBy[S ~[]E, E any, K comparable](byFn func(E) K, s1 S, s2 S) (out1 S, out2 S) {
 	if len(s1) == 0 || len(s2) == 0 {
-		return s1, s2
+		return s1, s2 // Clone(s1), Clone(s2)?
 	}
 
 	// elements seen in s1
