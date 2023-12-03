@@ -55,5 +55,5 @@
 //
 // Here list is a slice of strings containing two elements: "foo" and "bar".
 //
-// Also take a look at useful [Coalesce] and [ErrorsAs] functions.
+// Also take a look at useful [Coalesce] and [ErrorAs] functions.
 package conv

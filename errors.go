@@ -1,9 +1,11 @@
 package conv
 
-import "errors"
+import (
+	"errors"
+)
 
-// ErrorsAs is a shortcut for errors.As(err, &&T).
-func ErrorsAs[T any](err error) (T, bool) {
+// ErrorAs is a shortcut for errors.As(err, &T).
+func ErrorAs[T any](err error) (T, bool) {
 	var target T
 	ok := errors.As(err, &target)
 	return target, ok
