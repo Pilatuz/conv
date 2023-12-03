@@ -33,3 +33,24 @@ func TestErrorAs(tt *testing.T) {
 		}
 	})
 }
+
+// TestErrorIsAnyOf unit tets for [ErrorIsAnyOf] function.
+func TestErrorIsAnyOf(tt *testing.T) {
+	tt.Run("empty", func(t *testing.T) {
+		if conv.ErrorIsAnyOf(context.Canceled) {
+			t.Errorf("expected no match for empty targets")
+		}
+		if conv.ErrorIsAnyOf(fmt.Errorf("foo")) {
+			t.Errorf("expected no match for empty targets")
+		}
+	})
+
+	tt.Run("match", func(t *testing.T) {
+		if conv.ErrorIsAnyOf(fmt.Errorf("foo"), context.Canceled) {
+			t.Errorf("expected no match")
+		}
+		if !conv.ErrorIsAnyOf(fmt.Errorf("foo %w", context.Canceled), context.DeadlineExceeded, context.Canceled) {
+			t.Errorf("expected match")
+		}
+	})
+}
