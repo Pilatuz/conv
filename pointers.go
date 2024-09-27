@@ -39,6 +39,17 @@ func OmitEmpty[T comparable](p *T) *T {
 	return p // as is
 }
 
+// PtrToPtr converts T1 to T2 via pointers using conversion function.
+// Nil converted to nil.
+func PtrToPtr[T1, T2 any](convFn func(T1) T2, p1 *T1) *T2 {
+	if p1 == nil {
+		return nil // nil -> nil
+	}
+
+	v2 := convFn(*p1)
+	return &v2
+}
+
 // FirstNonNil gets first non-nil pointer.
 // It works similar to SQL COALESCE function.
 func FirstNonNil[T any](pp ...*T) *T {

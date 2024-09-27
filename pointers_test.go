@@ -43,6 +43,16 @@ func ExampleOmitEmpty() {
 	// <nil>
 }
 
+func ExamplePtrToPtr() {
+	p1 := conv.PtrFrom[int32](10)
+	var p2 *int64
+
+	fmt.Printf("%T\n", conv.PtrToPtr(conv.IntToInt[int, int32], p1))
+	fmt.Printf("%v\n", conv.PtrToPtr(conv.IntToInt[int, int64], p2))
+	// *int
+	// <nil>
+}
+
 func ExampleFirstNonNil() {
 	var a *string
 	var b *string
@@ -239,6 +249,29 @@ func TestOmitEmpty(tt *testing.T) {
 		p3 := true
 		if e, a := &p3, conv.OmitEmpty(&p3); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
+// TestPtrToPtr unit tests for `PtrToPtr` function.
+func TestPtrToPtr(tt *testing.T) {
+	tt.Run("int_to_int32", func(t *testing.T) {
+		if e, a := int32(10), conv.PtrToPtr(conv.IntToInt[int32, int], conv.PtrFrom(10)); a == nil || *a != e {
+			t.Errorf("expected `%v`, found `%v`", e, *a)
+		}
+
+		if a := conv.PtrToPtr(conv.IntToInt[int32, int], nil); a != nil {
+			t.Errorf("expected nil, found `%v`", *a)
+		}
+	})
+
+	tt.Run("int64_to_uint", func(t *testing.T) {
+		if e, a := uint(10), conv.PtrToPtr(conv.IntToInt[uint, int64], conv.PtrFrom[int64](10)); a == nil || *a != e {
+			t.Errorf("expected `%v`, found `%v`", e, *a)
+		}
+
+		if a := conv.PtrToPtr(conv.IntToInt[uint, int64], nil); a != nil {
+			t.Errorf("expected nil, found `%v`", *a)
 		}
 	})
 }

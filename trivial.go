@@ -12,6 +12,6 @@ type UnsignedInt interface {
 
 // IntToInt converts integers of virious types.
 // Mostly should be used with [PtrToPtr] function.
-func IntToInt[T2, T1 SignedInt | UnsignedInt](x1 T1) T2 {
-	return T2(x1) // trivial conversion
+func IntToInt[T1, T2 SignedInt | UnsignedInt](x2 T2) T1 {
+	return T1(x2) // trivial conversion
 }
