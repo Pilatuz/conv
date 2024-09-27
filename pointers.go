@@ -39,15 +39,15 @@ func OmitEmpty[T comparable](p *T) *T {
 	return p // as is
 }
 
-// PtrToPtr converts T1 to T2 via pointers using conversion function.
+// PtrToPtr converts T2 to T1 via pointers using conversion function.
 // Nil converted to nil.
-func PtrToPtr[T1, T2 any](convFn func(T1) T2, p1 *T1) *T2 {
-	if p1 == nil {
+func PtrToPtr[T1, T2 any](convFn func(T2) T1, p2 *T2) *T1 {
+	if p2 == nil {
 		return nil // nil -> nil
 	}
 
-	v2 := convFn(*p1)
-	return &v2
+	v1 := convFn(*p2)
+	return &v1
 }
 
 // FirstNonNil gets first non-nil pointer.
