@@ -50,6 +50,16 @@ func PtrToPtr[T1, T2 any](convFn func(T2) T1, p2 *T2) *T1 {
 	return &v1
 }
 
+// AnyFromPtr converts a pointer to any interface.
+// Nil pointer converted to nil.
+func AnyFromPtr[T any](p *T) any {
+	if p == nil {
+		return nil
+	}
+
+	return p
+}
+
 // FirstNonNil gets first non-nil pointer.
 // It works similar to SQL COALESCE function.
 func FirstNonNil[T any](pp ...*T) *T {

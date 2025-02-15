@@ -276,6 +276,37 @@ func TestPtrToPtr(tt *testing.T) {
 	})
 }
 
+// TestAnyFromPtr unit tests for `AnyFromPtr` function.
+func TestAnyFromPtr(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		var p1 *string
+		p2 := "foo"
+
+		if e, a := (any)(nil), conv.AnyFromPtr(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := (any)(&p2), conv.AnyFromPtr(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var p1 *int
+		p2 := 123
+
+		if e, a := (any)(nil), conv.AnyFromPtr(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		if e, a := (any)(&p2), conv.AnyFromPtr(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
 // TestFirstNonNil unit tests for `FirstNonNil` function.
 func TestFirstNonNil(tt *testing.T) {
 	// string
