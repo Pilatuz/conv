@@ -10,8 +10,8 @@ type UnsignedInt interface {
 	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 }
 
-// IntToInt converts integers of virious types.
+// IntToInt converts integers of various types.
 // Mostly should be used with [PtrToPtr] function.
-func IntToInt[T1, T2 SignedInt | UnsignedInt](v2 T2) T1 {
-	return T1(v2) // trivial conversion
+func IntToInt[T2, T1 SignedInt | UnsignedInt](v1 T1) T2 {
+	return T2(v1) // trivial conversion
 }

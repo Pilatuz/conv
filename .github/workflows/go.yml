@@ -28,10 +28,3 @@ jobs:
 
     - name: Test
       run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
-
-    - name: Coverage
-      if: ${{ matrix.go == '1.23' }}
-      uses: codecov/codecov-action@v3
-      with:
-        files: coverage.txt
-        fail_ci_if_error: true
