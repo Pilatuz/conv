@@ -71,7 +71,7 @@ func TestSlice(tt *testing.T) {
 	})
 }
 
-// TestSliceNotNil trivial unit tests for `SliceNotNil` function.
+// TestSliceNotNil unit tests for the [SliceNotNil] function.
 func TestSliceNotNil(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {

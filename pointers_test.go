@@ -49,6 +49,7 @@ func ExamplePtrToPtr() {
 
 	fmt.Printf("%T\n", conv.PtrToPtr(p1, conv.IntToInt[int, int32]))
 	fmt.Printf("%v\n", conv.PtrToPtr(p2, conv.IntToInt[int, int64]))
+	// Output:
 	// *int
 	// <nil>
 }
@@ -73,7 +74,7 @@ func ExampleCoalesce() {
 	// 123
 }
 
-// TestPtrFrom unit tests for `PtrFrom` function.
+// TestPtrFrom unit tests for the [PtrFrom] function.
 func TestPtrFrom(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -106,7 +107,7 @@ func TestPtrFrom(tt *testing.T) {
 	})
 }
 
-// TestFromPtrOr unit tests for `FromPtrOr` function.
+// TestFromPtrOr unit tests for the [FromPtrOr] function.
 func TestFromPtrOr(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -148,7 +149,7 @@ func TestFromPtrOr(tt *testing.T) {
 	})
 }
 
-// TestFromPtrOrFunc unit tests for `FromPtrOrFunc` function.
+// TestFromPtrOrFunc unit tests for the [FromPtrOrFunc] function.
 func TestFromPtrOrFunc(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -253,7 +254,7 @@ func TestOmitEmpty(tt *testing.T) {
 	})
 }
 
-// TestPtrToPtr unit tests for `PtrToPtr` function.
+// TestPtrToPtr unit tests for the [PtrToPtr] function.
 func TestPtrToPtr(tt *testing.T) {
 	tt.Run("int_to_int32", func(t *testing.T) {
 		if e, a := int32(10), conv.PtrToPtr(conv.PtrFrom(10), conv.IntToInt[int32, int]); a == nil || *a != e {
@@ -284,7 +285,7 @@ func TestPtrToPtr(tt *testing.T) {
 	})
 }
 
-// TestAnyFromPtr unit tests for `AnyFromPtr` function.
+// TestAnyFromPtr unit tests for the [AnyFromPtr] function.
 func TestAnyFromPtr(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -315,8 +316,8 @@ func TestAnyFromPtr(tt *testing.T) {
 	})
 }
 
-// TestFirstNonNil unit tests for `FirstNonNil` function.
-func TestFirstNonNil(tt *testing.T) {
+// TestFirstNotNil unit tests for the [FirstNotNil] function.
+func TestFirstNotNil(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
 		var p1 *string
@@ -375,7 +376,7 @@ func TestFirstNonNil(tt *testing.T) {
 	})
 }
 
-// TestCoalesce unit tests for `Coalesce` function.
+// TestCoalesce unit tests for the [Coalesce] function.
 func TestCoalesce(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {

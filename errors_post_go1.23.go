@@ -6,11 +6,12 @@ import (
 	"iter"
 )
 
-// UnwrapAll recursively iterates over all wrapped errors.
+// UnwrapAll returns an iterator over errs and all the errors they wrap.
 //
-// UnwrapAll accepts one or more errors and iterates over each error
-// and all errors wrapped by it (via Unwrap()).
-// The iteration includes the original errors and all nested wrapped errors.
+// Each error is unwrapped recursively via its Unwrap() error
+// or Unwrap() []error method. The iteration includes the original
+// errors themselves and is done in depth-first pre-order.
+// Nil errors are skipped.
 func UnwrapAll(errs ...error) iter.Seq[error] {
 	return func(yield func(error) bool) {
 		for _, err := range errs {
@@ -21,8 +22,10 @@ func UnwrapAll(errs ...error) iter.Seq[error] {
 	}
 }
 
-// unwrapAll recursively iterates over all wrapped errors.
-func unwrapAll(err error, yield func(error) bool) (_continue bool) {
+// unwrapAll yields err and all the errors it wraps.
+//
+// It returns false if the consumer has stopped the iteration.
+func unwrapAll(err error, yield func(error) bool) bool {
 	if err == nil {
 		return true
 	}
@@ -48,11 +51,14 @@ func unwrapAll(err error, yield func(error) bool) (_continue bool) {
 	return true
 }
 
-// UnwrapAllAs recursively iterates over all wrapped errors of a specific type.
+// UnwrapAllAs returns an iterator over all the errors of type E
+// found in errs and in the errors they wrap.
 //
-// UnwrapAllAs accepts one or more errors and iterates over each error
-// of type E that is found by direct type assertion or via the As() method.
-// It traverses all wrapped errors recursively.
+// It walks the same error tree as [UnwrapAll] and reports each error
+// that is either of type E directly or convertible to E via its
+// As(any) bool method.
+//
+// Note that an error satisfying both conditions is reported twice.
 func UnwrapAllAs[E error](errs ...error) iter.Seq[E] {
 	return func(yield func(E) bool) {
 		for err := range UnwrapAll(errs...) {

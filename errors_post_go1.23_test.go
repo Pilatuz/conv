@@ -11,7 +11,7 @@ import (
 	"github.com/Pilatuz/conv"
 )
 
-// eq checks if two arrays are equal.
+// eq reports whether two error slices are equal.
 func eq[E error](a, b []E) bool {
 	if len(a) != len(b) {
 		return false
@@ -26,7 +26,7 @@ func eq[E error](a, b []E) bool {
 	return true
 }
 
-// TestUnwrapAllErrors unit tests for UnwrapAllErrors function.
+// TestUnwrapAllErrors unit tests for the [UnwrapAll] and [UnwrapAllAs] functions.
 func TestUnwrapAllErrors(t *testing.T) {
 	var Nil error
 	err1 := errors.New("err1")

@@ -6,7 +6,9 @@ import (
 	"errors"
 )
 
-// ErrorAs is a shortcut for errors.As(err, &E).
+// ErrorAs is a shortcut for errors.As(err, &target) of type E.
+//
+// The ok result reports whether a match was found.
 func ErrorAs[E error](err error) (E, bool) {
 	var target E
 	ok := errors.As(err, &target)

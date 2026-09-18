@@ -10,7 +10,7 @@ import (
 	"github.com/Pilatuz/conv"
 )
 
-// TestAllNotNil unit tests for `AllNotNil` function.
+// TestAllNotNil unit tests for the [AllNotNil] function.
 func TestAllNotNil(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -69,7 +69,7 @@ func TestAllNotNil(tt *testing.T) {
 	})
 }
 
-// TestAllNotNil2 unit tests for `AllNotNil2` function.
+// TestAllNotNil2 unit tests for the [AllNotNil2] function.
 func TestAllNotNil2(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
