@@ -26,13 +26,16 @@ func FromPtrOrFunc[T any](p *T, ifNilFn func() T) T {
 	return ifNilFn()
 }
 
-// OmitEmpty returns nil pointer if value *p is empty (or default).
+// PtrOmitZero returns nil if the value pointed to by p is the zero value of its type.
 //
-// Is used to get nil pointer instead of empty string or zero integer.
-func OmitEmpty[T comparable](p *T) *T {
+// It is used to get a nil pointer instead of a pointer
+// to an empty string or to a zero integer.
+// Note that [SliceOmitEmpty] instead tests a slice for emptiness,
+// the same way the json "omitempty" and "omitzero" options differ.
+func PtrOmitZero[T comparable](p *T) *T {
 	if p != nil {
-		var EMPTY T
-		if *p == EMPTY {
+		var zero T
+		if *p == zero {
 			return nil
 		}
 	}
@@ -40,8 +43,19 @@ func OmitEmpty[T comparable](p *T) *T {
 	return p // as is
 }
 
-// PtrToPtr converts T1 to T2 via pointers using conversion function.
-// Nil converted to nil.
+// OmitEmpty returns nil if the value pointed to by p is the zero value of its type.
+//
+// Deprecated: use [PtrOmitZero] instead, it is named consistently with
+// the other pointer helpers and states the zero-value check explicitly.
+//
+//go:fix inline
+func OmitEmpty[T comparable](p *T) *T {
+	return PtrOmitZero(p)
+}
+
+// PtrToPtr converts *T1 to *T2 using the conversion function convFn.
+//
+// A nil pointer is converted to nil, so convFn is never called with a nil input.
 func PtrToPtr[T2, T1 any](p1 *T1, convFn func(T1) T2) *T2 {
 	if p1 == nil {
 		return nil // nil -> nil

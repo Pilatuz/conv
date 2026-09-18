@@ -35,9 +35,9 @@ func ExampleFromPtrOrFunc() {
 	// 12345
 }
 
-func ExampleOmitEmpty() {
-	fmt.Println(conv.OmitEmpty(conv.PtrFrom("")))
-	fmt.Println(conv.OmitEmpty(conv.PtrFrom(0)))
+func ExamplePtrOmitZero() {
+	fmt.Println(conv.PtrOmitZero(conv.PtrFrom("")))
+	fmt.Println(conv.PtrOmitZero(conv.PtrFrom(0)))
 	// Output:
 	// <nil>
 	// <nil>
@@ -197,9 +197,68 @@ func TestFromPtrOrFunc(tt *testing.T) {
 	})
 }
 
-// TestOmitEmpty unit tests for `OmitEmpty` function.
-func TestOmitEmpty(tt *testing.T) {
+// TestPtrOmitZero unit tests for the [PtrOmitZero] function.
+func TestPtrOmitZero(tt *testing.T) {
 	// string
+	tt.Run("str", func(t *testing.T) {
+		var p1 *string
+		if e, a := (*string)(nil), conv.PtrOmitZero(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		var p2 string
+		if e, a := (*string)(nil), conv.PtrOmitZero(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p3 := "foo"
+		if e, a := &p3, conv.PtrOmitZero(&p3); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var p1 *int
+		if e, a := (*int)(nil), conv.PtrOmitZero(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		var p2 int
+		if e, a := (*int)(nil), conv.PtrOmitZero(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p3 := 123
+		if e, a := &p3, conv.PtrOmitZero(&p3); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// boolean
+	tt.Run("bool", func(t *testing.T) {
+		var p1 *bool
+		if e, a := (*bool)(nil), conv.PtrOmitZero(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		var p2 bool
+		if e, a := (*bool)(nil), conv.PtrOmitZero(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p3 := true
+		if e, a := &p3, conv.PtrOmitZero(&p3); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
+// TestOmitEmpty unit tests for the deprecated [OmitEmpty] alias.
+//
+//nolint:staticcheck // the deprecated alias is tested on purpose
+func TestOmitEmpty(tt *testing.T) {
+	// the alias must behave exactly like [PtrOmitZero]
 	tt.Run("str", func(t *testing.T) {
 		var p1 *string
 		if e, a := (*string)(nil), conv.OmitEmpty(p1); a != e {
@@ -217,7 +276,6 @@ func TestOmitEmpty(tt *testing.T) {
 		}
 	})
 
-	// integer
 	tt.Run("int", func(t *testing.T) {
 		var p1 *int
 		if e, a := (*int)(nil), conv.OmitEmpty(p1); a != e {
