@@ -20,7 +20,18 @@ func ExampleMapNotNil() {
 	// {}
 }
 
-// TestMapNotNil unit tests for `MapNotNil` function.
+func ExampleMapOmitEmpty() {
+	m := conv.MapOmitEmpty(map[string]string{})
+	if m == nil {
+		fmt.Println("<nil>")
+	} else {
+		fmt.Println("{}")
+	}
+	// Output:
+	// <nil>
+}
+
+// TestMapNotNil unit tests for the [MapNotNil] function.
 func TestMapNotNil(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -72,6 +83,63 @@ func TestMapNotNil(tt *testing.T) {
 
 		// MapNotNil({a, b, ...}) gives map {a, b, ...}
 		if e, a := map[string]bool{"foo": true, "bar": false}, conv.MapNotNil(map[string]bool{"foo": true, "bar": false}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
+// TestMapOmitEmpty unit tests for the [MapOmitEmpty] function.
+func TestMapOmitEmpty(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		// MapOmitEmpty(nil) gives nil
+		if e, a := (map[string]string)(nil), conv.MapOmitEmpty[map[string]string](nil); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// MapOmitEmpty({}) gives nil
+		if e, a := (map[string]string)(nil), conv.MapOmitEmpty(map[string]string{}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// MapOmitEmpty({a, b, ...}) gives map {a, b, ...}
+		if e, a := map[string]string{"foo": "1", "bar": "2"}, conv.MapOmitEmpty(map[string]string{"foo": "1", "bar": "2"}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		// MapOmitEmpty(nil) gives nil
+		if e, a := (map[string]int)(nil), conv.MapOmitEmpty[map[string]int](nil); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// MapOmitEmpty({}) gives nil
+		if e, a := (map[string]int)(nil), conv.MapOmitEmpty(map[string]int{}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// MapOmitEmpty({a, b, ...}) gives map {a, b, ...}
+		if e, a := map[string]int{"foo": 123, "bar": 456}, conv.MapOmitEmpty(map[string]int{"foo": 123, "bar": 456}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// boolean
+	tt.Run("bool", func(t *testing.T) {
+		// MapOmitEmpty(nil) gives nil
+		if e, a := (map[string]bool)(nil), conv.MapOmitEmpty[map[string]bool](nil); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// MapOmitEmpty({}) gives nil
+		if e, a := (map[string]bool)(nil), conv.MapOmitEmpty(map[string]bool{}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// MapOmitEmpty({a, b, ...}) gives map {a, b, ...}
+		if e, a := map[string]bool{"foo": true, "bar": false}, conv.MapOmitEmpty(map[string]bool{"foo": true, "bar": false}); !reflect.DeepEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})

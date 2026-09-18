@@ -11,3 +11,15 @@ func MapNotNil[M ~map[K]V, K comparable, V any](m M) M {
 
 	return M{} // empty
 }
+
+// MapOmitEmpty returns nil if the input map m is empty.
+//
+// Both nil and non-nil maps of zero length are reported as empty.
+// It is the inverse of [MapNotNil].
+func MapOmitEmpty[M ~map[K]V, K comparable, V any](m M) M {
+	if len(m) == 0 {
+		return nil
+	}
+
+	return m // as is
+}

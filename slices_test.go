@@ -32,7 +32,18 @@ func ExampleSliceNotNil() {
 	// []
 }
 
-// TestSlice unit tests for `Slice` function.
+func ExampleSliceOmitEmpty() {
+	s := conv.SliceOmitEmpty([]string{})
+	if s == nil {
+		fmt.Println("<nil>")
+	} else {
+		fmt.Println("[]")
+	}
+	// Output:
+	// <nil>
+}
+
+// TestSlice unit tests for the [Slice] function.
 func TestSlice(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -105,6 +116,45 @@ func TestSliceNotNil(tt *testing.T) {
 
 		// SliceNotNil([a, b, ...]) gives slice [a, b, ...]
 		if e, a := []int{123, 456}, conv.SliceNotNil(conv.Slice(123, 456)); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
+// TestSliceOmitEmpty unit tests for the [SliceOmitEmpty] function.
+func TestSliceOmitEmpty(tt *testing.T) {
+	// string
+	tt.Run("str", func(t *testing.T) {
+		// SliceOmitEmpty(nil) gives nil
+		if e, a := ([]string)(nil), conv.SliceOmitEmpty(([]string)(nil)); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceOmitEmpty([]) gives nil
+		if e, a := ([]string)(nil), conv.SliceOmitEmpty([]string{}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceOmitEmpty([a, b, ...]) gives slice [a, b, ...]
+		if e, a := []string{"foo", "bar"}, conv.SliceOmitEmpty(conv.Slice("foo", "bar")); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		// SliceOmitEmpty(nil) gives nil
+		if e, a := ([]int)(nil), conv.SliceOmitEmpty(([]int)(nil)); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceOmitEmpty([]) gives nil
+		if e, a := ([]int)(nil), conv.SliceOmitEmpty([]int{}); !reflect.DeepEqual(a, e) {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		// SliceOmitEmpty([a, b, ...]) gives slice [a, b, ...]
+		if e, a := []int{123, 456}, conv.SliceOmitEmpty(conv.Slice(123, 456)); !reflect.DeepEqual(a, e) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
