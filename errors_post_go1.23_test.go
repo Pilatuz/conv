@@ -11,7 +11,7 @@ import (
 	"github.com/Pilatuz/conv"
 )
 
-// eq checks if two arrays are equal.
+// eq reports whether two error slices are equal.
 func eq[E error](a, b []E) bool {
 	if len(a) != len(b) {
 		return false
@@ -26,7 +26,7 @@ func eq[E error](a, b []E) bool {
 	return true
 }
 
-// TestUnwrapAllErrors unit tests for UnwrapAllErrors function.
+// TestUnwrapAllErrors unit tests for the [UnwrapAll] and [UnwrapAllAs] functions.
 func TestUnwrapAllErrors(t *testing.T) {
 	var Nil error
 	err1 := errors.New("err1")
@@ -229,6 +229,39 @@ func TestUnwrapAllErrors(t *testing.T) {
 		}
 	})
 
+	t.Run("UnwrapAllAs.self_as", func(t *testing.T) {
+		// Error3.As succeeds for its own type, so it matches both by the type
+		// assertion and via As() - it still has to be reported just once
+		err1a := &Error3{msg: "foo"}
+		err2a := &Error3{msg: "bar"}
+		err := errors.Join(err1a, err2a)
+		got := slices.Collect(conv.UnwrapAllAs[*Error3](err))
+		if expected := []*Error3{err1a, err2a}; !eq(expected, got) {
+			t.Errorf("UnwrapAllAs([Error3, Error3]) = %v, expected %v", got, expected)
+		}
+	})
+
+	t.Run("UnwrapAllAs.self_as.break", func(t *testing.T) {
+		err1a := &Error3{msg: "foo"}
+		err2a := &Error3{msg: "bar"}
+		err := errors.Join(err1a, err2a)
+
+		expected := []*Error3{err1a, err2a}
+
+		for n := range len(expected) {
+			var got []*Error3
+			for e := range conv.UnwrapAllAs[*Error3](Nil, err, Nil) {
+				got = append(got, e)
+				if len(got) > n {
+					break
+				}
+			}
+			if expected := expected[:n+1]; !eq(expected, got) {
+				t.Errorf("UnwrapAllAs([Error3, Error3], break=%d) = %v, expected %v", n, got, expected)
+			}
+		}
+	})
+
 	t.Run("UnwrapAllAs.interface_type", func(t *testing.T) {
 		err1a := Error1{msg: "foo"}
 		err2a := Error2{msg: "bar"}
@@ -266,5 +299,24 @@ func (e Error2) Error() string {
 }
 
 func (Error2) As(target any) bool {
+	return false
+}
+
+// Error3 implements As() for its own type, the way several
+// stdlib and third-party errors do.
+type Error3 struct {
+	msg string
+}
+
+func (e *Error3) Error() string {
+	return e.msg
+}
+
+func (e *Error3) As(target any) bool {
+	if p, ok := target.(**Error3); ok {
+		*p = e
+		return true
+	}
+
 	return false
 }

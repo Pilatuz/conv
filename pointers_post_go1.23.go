@@ -6,7 +6,9 @@ import (
 	"iter"
 )
 
-// AllNotNil returns all not-nil elements.
+// AllNotNil returns an iterator over all the non-nil pointers of pp.
+//
+// Use [AllNotNil2] if the original indices are also needed.
 func AllNotNil[T any](pp ...*T) iter.Seq[*T] {
 	return func(yield func(*T) bool) {
 		for _, p := range pp {
@@ -21,7 +23,8 @@ func AllNotNil[T any](pp ...*T) iter.Seq[*T] {
 	}
 }
 
-// AllNotNil2 returns all not-nil elements with original indices.
+// AllNotNil2 returns an iterator over all the non-nil pointers of pp
+// along with their original indices.
 func AllNotNil2[T any](pp ...*T) iter.Seq2[int, *T] {
 	return func(yield func(int, *T) bool) {
 		for i, p := range pp {

@@ -16,7 +16,7 @@ func ExampleMust() {
 	// Output: 123
 }
 
-// TestMust unit tests for [Must] function.
+// TestMust unit tests for the [Must] function.
 func TestMust(tt *testing.T) {
 	tt.Run("good_str", func(t *testing.T) {
 		fn := func() (string, error) {
@@ -82,7 +82,7 @@ func ExampleMustOK() {
 	// Output: false
 }
 
-// TestMustOK unit tests for [MustOK] function.
+// TestMustOK unit tests for the [MustOK] function.
 func TestMustOK(tt *testing.T) {
 	tt.Run("good_str", func(t *testing.T) {
 		fn := func() (string, bool) {

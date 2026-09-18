@@ -1,11 +1,11 @@
 package conv
 
-// PtrFrom gets pointer from any value or constant v.
+// PtrFrom returns a pointer to the value or constant v.
 func PtrFrom[T any](v T) *T {
 	return &v
 }
 
-// FromPtrOr dereferences pointer p or use fallback value ifNil if pointer is nil.
+// FromPtrOr returns the value pointed to by p, or ifNil if p is nil.
 func FromPtrOr[T any](p *T, ifNil T) T {
 	if p != nil {
 		return *p
@@ -14,9 +14,10 @@ func FromPtrOr[T any](p *T, ifNil T) T {
 	return ifNil
 }
 
-// FromPtrOrFunc dereferences pointer p or use fallback function ifNilFn call result if pointer p is nil.
+// FromPtrOrFunc returns the value pointed to by p, or the result of ifNilFn if p is nil.
 //
-// The main difference from [FromPtrOr] - the fallback value is lazy initialized here.
+// Unlike [FromPtrOr], the fallback value is initialized lazily:
+// ifNilFn is called only when p is nil.
 func FromPtrOrFunc[T any](p *T, ifNilFn func() T) T {
 	if p != nil {
 		return *p
@@ -25,13 +26,16 @@ func FromPtrOrFunc[T any](p *T, ifNilFn func() T) T {
 	return ifNilFn()
 }
 
-// OmitEmpty returns nil pointer if value *p is empty (or default).
+// PtrOmitZero returns nil if the value pointed to by p is the zero value of its type.
 //
-// Is used to get nil pointer instead of empty string or zero integer.
-func OmitEmpty[T comparable](p *T) *T {
+// It is used to get a nil pointer instead of a pointer
+// to an empty string or to a zero integer.
+// Note that [SliceOmitEmpty] instead tests a slice for emptiness,
+// the same way the json "omitempty" and "omitzero" options differ.
+func PtrOmitZero[T comparable](p *T) *T {
 	if p != nil {
-		var EMPTY T
-		if *p == EMPTY {
+		var zero T
+		if *p == zero {
 			return nil
 		}
 	}
@@ -39,8 +43,19 @@ func OmitEmpty[T comparable](p *T) *T {
 	return p // as is
 }
 
-// PtrToPtr converts T1 to T2 via pointers using conversion function.
-// Nil converted to nil.
+// OmitEmpty returns nil if the value pointed to by p is the zero value of its type.
+//
+// Deprecated: use [PtrOmitZero] instead, it is named consistently with
+// the other pointer helpers and states the zero-value check explicitly.
+//
+//go:fix inline
+func OmitEmpty[T comparable](p *T) *T {
+	return PtrOmitZero(p)
+}
+
+// PtrToPtr converts *T1 to *T2 using the conversion function convFn.
+//
+// A nil pointer is converted to nil, so convFn is never called with a nil input.
 func PtrToPtr[T2, T1 any](p1 *T1, convFn func(T1) T2) *T2 {
 	if p1 == nil {
 		return nil // nil -> nil
@@ -50,8 +65,10 @@ func PtrToPtr[T2, T1 any](p1 *T1, convFn func(T1) T2) *T2 {
 	return &v2
 }
 
-// AnyFromPtr converts a pointer to any interface.
-// Nil pointer converted to nil.
+// AnyFromPtr converts a pointer to the any interface.
+//
+// A nil pointer is converted to a nil interface, so the result
+// is never a non-nil interface holding a nil pointer.
 func AnyFromPtr[T any](p *T) any {
 	if p == nil {
 		return nil
@@ -60,20 +77,36 @@ func AnyFromPtr[T any](p *T) any {
 	return p
 }
 
-// FirstNonNil gets first non-nil pointer.
-// It works similar to SQL COALESCE function.
-func FirstNonNil[T any](pp ...*T) *T {
+// FirstNotNil returns the first non-nil pointer of pp, or nil if there is none.
+//
+// It works similar to the SQL COALESCE function.
+// Use [Coalesce] to do the same for any comparable type, not just pointers.
+func FirstNotNil[T any](pp ...*T) *T {
 	return Coalesce(pp...)
 }
 
-// Coalesce gets first non-empty value.
-// Similar to [FirstNonNil] but works with any types, not just pointers.
+// FirstNonNil returns the first non-nil pointer of pp, or nil if there is none.
+//
+// Deprecated: use [FirstNotNil] instead, it is named consistently
+// with [SliceNotNil] and [MapNotNil].
+//
+//go:fix inline
+func FirstNonNil[T any](pp ...*T) *T {
+	return FirstNotNil(pp...)
+}
+
+// Coalesce returns the first non-zero value of vv, or the zero value if there is none.
+//
+// It is similar to [FirstNonNil] but works with any comparable type, not just pointers.
+// Use [CoalesceEx] to distinguish "no non-zero value found" from "the zero value was found".
 func Coalesce[T comparable](vv ...T) T {
 	out, _ := CoalesceEx(vv...)
 	return out // ignore OK status
 }
 
-// CoalesceEx gets first non-empty value with OK status.
+// CoalesceEx returns the first non-zero value of vv.
+//
+// The ok result reports whether such a value was found.
 func CoalesceEx[T comparable](vv ...T) (out T, ok bool) {
 	for _, v := range vv {
 		if v == out {

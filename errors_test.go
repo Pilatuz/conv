@@ -17,7 +17,7 @@ func ExampleErrorAs() {
 	// invalid typ: txt true
 }
 
-// TestErrorAs unit tests for [ErrorAs] function.
+// TestErrorAs unit tests for the [ErrorAs] function.
 func TestErrorAs(tt *testing.T) {
 	tt.Run("not_ok", func(t *testing.T) {
 		err := context.Canceled
@@ -34,7 +34,7 @@ func TestErrorAs(tt *testing.T) {
 	})
 }
 
-// TestErrorIsAnyOf unit tets for [ErrorIsAnyOf] function.
+// TestErrorIsAnyOf unit tests for the [ErrorIsAnyOf] function.
 func TestErrorIsAnyOf(tt *testing.T) {
 	tt.Run("empty", func(t *testing.T) {
 		if conv.ErrorIsAnyOf(context.Canceled) {

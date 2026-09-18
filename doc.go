@@ -49,11 +49,18 @@
 //	})
 //
 // There are also a few useful slice helpers.
-// You can use [Slice] function to create slice from a set of values:
+// You can use the [Slice] function to create a slice from a set of values:
 //
 //	list := conv.Slice("foo", "bar")
 //
 // Here list is a slice of strings containing two elements: "foo" and "bar".
+// Use [SliceNotNil] and [MapNotNil] to normalize a nil slice or map into
+// an empty one, and [SliceOmitEmpty], [MapOmitEmpty] or [PtrOmitZero]
+// to do the opposite.
 //
-// Also take a look at useful [Coalesce] and [ErrorAs] functions.
+// For errors there are [ErrorAs] and [ErrorIsAnyOf] shortcuts, plus the
+// [UnwrapAll] and [UnwrapAllAs] iterators to walk the whole error tree
+// (go1.23 and above).
+//
+// Also take a look at the useful [Coalesce], [Must] and [MustOK] functions.
 package conv

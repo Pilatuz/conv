@@ -6,7 +6,7 @@ import (
 	"github.com/Pilatuz/conv"
 )
 
-// TestIntToInt unit tests for `IntToInt` function.
+// TestIntToInt unit tests for the [IntToInt] function.
 func TestIntToInt(tt *testing.T) {
 	// int -> *
 	tt.Run("int", func(t *testing.T) {
@@ -45,7 +45,7 @@ func TestIntToInt(tt *testing.T) {
 	})
 
 	// int8 -> *
-	tt.Run("uint", func(t *testing.T) {
+	tt.Run("int8", func(t *testing.T) {
 		const IN int8 = 123
 
 		if e, a := int(IN), conv.IntToInt[int](IN); a != e {

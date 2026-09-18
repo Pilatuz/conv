@@ -35,9 +35,9 @@ func ExampleFromPtrOrFunc() {
 	// 12345
 }
 
-func ExampleOmitEmpty() {
-	fmt.Println(conv.OmitEmpty(conv.PtrFrom("")))
-	fmt.Println(conv.OmitEmpty(conv.PtrFrom(0)))
+func ExamplePtrOmitZero() {
+	fmt.Println(conv.PtrOmitZero(conv.PtrFrom("")))
+	fmt.Println(conv.PtrOmitZero(conv.PtrFrom(0)))
 	// Output:
 	// <nil>
 	// <nil>
@@ -49,17 +49,18 @@ func ExamplePtrToPtr() {
 
 	fmt.Printf("%T\n", conv.PtrToPtr(p1, conv.IntToInt[int, int32]))
 	fmt.Printf("%v\n", conv.PtrToPtr(p2, conv.IntToInt[int, int64]))
+	// Output:
 	// *int
 	// <nil>
 }
 
-func ExampleFirstNonNil() {
+func ExampleFirstNotNil() {
 	var a *string
 	var b *string
 	c := conv.PtrFrom("foo")
 	var d *string
 
-	fmt.Println(*conv.FirstNonNil(a, b, c, d))
+	fmt.Println(*conv.FirstNotNil(a, b, c, d))
 	// Output:
 	// foo
 }
@@ -73,7 +74,7 @@ func ExampleCoalesce() {
 	// 123
 }
 
-// TestPtrFrom unit tests for `PtrFrom` function.
+// TestPtrFrom unit tests for the [PtrFrom] function.
 func TestPtrFrom(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -106,7 +107,7 @@ func TestPtrFrom(tt *testing.T) {
 	})
 }
 
-// TestFromPtrOr unit tests for `FromPtrOr` function.
+// TestFromPtrOr unit tests for the [FromPtrOr] function.
 func TestFromPtrOr(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -148,7 +149,7 @@ func TestFromPtrOr(tt *testing.T) {
 	})
 }
 
-// TestFromPtrOrFunc unit tests for `FromPtrOrFunc` function.
+// TestFromPtrOrFunc unit tests for the [FromPtrOrFunc] function.
 func TestFromPtrOrFunc(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -196,9 +197,68 @@ func TestFromPtrOrFunc(tt *testing.T) {
 	})
 }
 
-// TestOmitEmpty unit tests for `OmitEmpty` function.
-func TestOmitEmpty(tt *testing.T) {
+// TestPtrOmitZero unit tests for the [PtrOmitZero] function.
+func TestPtrOmitZero(tt *testing.T) {
 	// string
+	tt.Run("str", func(t *testing.T) {
+		var p1 *string
+		if e, a := (*string)(nil), conv.PtrOmitZero(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		var p2 string
+		if e, a := (*string)(nil), conv.PtrOmitZero(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p3 := "foo"
+		if e, a := &p3, conv.PtrOmitZero(&p3); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// integer
+	tt.Run("int", func(t *testing.T) {
+		var p1 *int
+		if e, a := (*int)(nil), conv.PtrOmitZero(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		var p2 int
+		if e, a := (*int)(nil), conv.PtrOmitZero(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p3 := 123
+		if e, a := &p3, conv.PtrOmitZero(&p3); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	// boolean
+	tt.Run("bool", func(t *testing.T) {
+		var p1 *bool
+		if e, a := (*bool)(nil), conv.PtrOmitZero(p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		var p2 bool
+		if e, a := (*bool)(nil), conv.PtrOmitZero(&p2); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+
+		p3 := true
+		if e, a := &p3, conv.PtrOmitZero(&p3); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+}
+
+// TestOmitEmpty unit tests for the deprecated [OmitEmpty] alias.
+//
+//nolint:staticcheck // the deprecated alias is tested on purpose
+func TestOmitEmpty(tt *testing.T) {
+	// the alias must behave exactly like [PtrOmitZero]
 	tt.Run("str", func(t *testing.T) {
 		var p1 *string
 		if e, a := (*string)(nil), conv.OmitEmpty(p1); a != e {
@@ -216,7 +276,6 @@ func TestOmitEmpty(tt *testing.T) {
 		}
 	})
 
-	// integer
 	tt.Run("int", func(t *testing.T) {
 		var p1 *int
 		if e, a := (*int)(nil), conv.OmitEmpty(p1); a != e {
@@ -233,27 +292,43 @@ func TestOmitEmpty(tt *testing.T) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
+}
 
-	// boolean
-	tt.Run("bool", func(t *testing.T) {
-		var p1 *bool
-		if e, a := (*bool)(nil), conv.OmitEmpty(p1); a != e {
+// TestFirstNonNil unit tests for the deprecated [FirstNonNil] alias.
+//
+//nolint:staticcheck // the deprecated alias is tested on purpose
+func TestFirstNonNil(tt *testing.T) {
+	// the alias must behave exactly like [FirstNotNil]
+	tt.Run("str", func(t *testing.T) {
+		var p1 *string
+		var p2 string
+		p3 := "foo"
+
+		if e, a := (*string)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		var p2 bool
-		if e, a := (*bool)(nil), conv.OmitEmpty(&p2); a != e {
+		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	tt.Run("int", func(t *testing.T) {
+		var p1 *int
+		var p2 int
+		p3 := 123
+
+		if e, a := (*int)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		p3 := true
-		if e, a := &p3, conv.OmitEmpty(&p3); a != e {
+		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
 }
 
-// TestPtrToPtr unit tests for `PtrToPtr` function.
+// TestPtrToPtr unit tests for the [PtrToPtr] function.
 func TestPtrToPtr(tt *testing.T) {
 	tt.Run("int_to_int32", func(t *testing.T) {
 		if e, a := int32(10), conv.PtrToPtr(conv.PtrFrom(10), conv.IntToInt[int32, int]); a == nil || *a != e {
@@ -284,7 +359,7 @@ func TestPtrToPtr(tt *testing.T) {
 	})
 }
 
-// TestAnyFromPtr unit tests for `AnyFromPtr` function.
+// TestAnyFromPtr unit tests for the [AnyFromPtr] function.
 func TestAnyFromPtr(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
@@ -315,23 +390,23 @@ func TestAnyFromPtr(tt *testing.T) {
 	})
 }
 
-// TestFirstNonNil unit tests for `FirstNonNil` function.
-func TestFirstNonNil(tt *testing.T) {
+// TestFirstNotNil unit tests for the [FirstNotNil] function.
+func TestFirstNotNil(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
 		var p1 *string
 		var p2 string
 		p3 := "foo"
 
-		if e, a := (*string)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
+		if e, a := (*string)(nil), conv.FirstNotNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+		if e, a := &p2, conv.FirstNotNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p3, conv.FirstNonNil(p1, &p3, &p2, p1); a != e {
+		if e, a := &p3, conv.FirstNotNil(p1, &p3, &p2, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
@@ -342,15 +417,15 @@ func TestFirstNonNil(tt *testing.T) {
 		var p2 int
 		p3 := 123
 
-		if e, a := (*int)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
+		if e, a := (*int)(nil), conv.FirstNotNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+		if e, a := &p2, conv.FirstNotNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p3, conv.FirstNonNil(p1, &p3, &p2, p1); a != e {
+		if e, a := &p3, conv.FirstNotNil(p1, &p3, &p2, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
@@ -361,21 +436,21 @@ func TestFirstNonNil(tt *testing.T) {
 		var p2 bool
 		p3 := true
 
-		if e, a := (*bool)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
+		if e, a := (*bool)(nil), conv.FirstNotNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+		if e, a := &p2, conv.FirstNotNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p3, conv.FirstNonNil(p1, &p3, &p2, p1); a != e {
+		if e, a := &p3, conv.FirstNotNil(p1, &p3, &p2, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
 }
 
-// TestCoalesce unit tests for `Coalesce` function.
+// TestCoalesce unit tests for the [Coalesce] function.
 func TestCoalesce(tt *testing.T) {
 	// string
 	tt.Run("str", func(t *testing.T) {
