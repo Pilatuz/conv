@@ -54,13 +54,13 @@ func ExamplePtrToPtr() {
 	// <nil>
 }
 
-func ExampleFirstNonNil() {
+func ExampleFirstNotNil() {
 	var a *string
 	var b *string
 	c := conv.PtrFrom("foo")
 	var d *string
 
-	fmt.Println(*conv.FirstNonNil(a, b, c, d))
+	fmt.Println(*conv.FirstNotNil(a, b, c, d))
 	// Output:
 	// foo
 }
@@ -292,21 +292,37 @@ func TestOmitEmpty(tt *testing.T) {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
+}
 
-	// boolean
-	tt.Run("bool", func(t *testing.T) {
-		var p1 *bool
-		if e, a := (*bool)(nil), conv.OmitEmpty(p1); a != e {
+// TestFirstNonNil unit tests for the deprecated [FirstNonNil] alias.
+//
+//nolint:staticcheck // the deprecated alias is tested on purpose
+func TestFirstNonNil(tt *testing.T) {
+	// the alias must behave exactly like [FirstNotNil]
+	tt.Run("str", func(t *testing.T) {
+		var p1 *string
+		var p2 string
+		p3 := "foo"
+
+		if e, a := (*string)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		var p2 bool
-		if e, a := (*bool)(nil), conv.OmitEmpty(&p2); a != e {
+		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+			t.Errorf("expected `%v`, found `%v`", e, a)
+		}
+	})
+
+	tt.Run("int", func(t *testing.T) {
+		var p1 *int
+		var p2 int
+		p3 := 123
+
+		if e, a := (*int)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		p3 := true
-		if e, a := &p3, conv.OmitEmpty(&p3); a != e {
+		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
@@ -382,15 +398,15 @@ func TestFirstNotNil(tt *testing.T) {
 		var p2 string
 		p3 := "foo"
 
-		if e, a := (*string)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
+		if e, a := (*string)(nil), conv.FirstNotNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+		if e, a := &p2, conv.FirstNotNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p3, conv.FirstNonNil(p1, &p3, &p2, p1); a != e {
+		if e, a := &p3, conv.FirstNotNil(p1, &p3, &p2, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
@@ -401,15 +417,15 @@ func TestFirstNotNil(tt *testing.T) {
 		var p2 int
 		p3 := 123
 
-		if e, a := (*int)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
+		if e, a := (*int)(nil), conv.FirstNotNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+		if e, a := &p2, conv.FirstNotNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p3, conv.FirstNonNil(p1, &p3, &p2, p1); a != e {
+		if e, a := &p3, conv.FirstNotNil(p1, &p3, &p2, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})
@@ -420,15 +436,15 @@ func TestFirstNotNil(tt *testing.T) {
 		var p2 bool
 		p3 := true
 
-		if e, a := (*bool)(nil), conv.FirstNonNil(p1, nil, p1); a != e {
+		if e, a := (*bool)(nil), conv.FirstNotNil(p1, nil, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p2, conv.FirstNonNil(p1, &p2, &p3, p1); a != e {
+		if e, a := &p2, conv.FirstNotNil(p1, &p2, &p3, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 
-		if e, a := &p3, conv.FirstNonNil(p1, &p3, &p2, p1); a != e {
+		if e, a := &p3, conv.FirstNotNil(p1, &p3, &p2, p1); a != e {
 			t.Errorf("expected `%v`, found `%v`", e, a)
 		}
 	})

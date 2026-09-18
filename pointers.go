@@ -77,12 +77,23 @@ func AnyFromPtr[T any](p *T) any {
 	return p
 }
 
-// FirstNonNil gets first non-nil pointer.
-// It works similar to SQL COALESCE function.
-func FirstNonNil[T any](pp ...*T) *T {
+// FirstNotNil returns the first non-nil pointer of pp, or nil if there is none.
+//
+// It works similar to the SQL COALESCE function.
+// Use [Coalesce] to do the same for any comparable type, not just pointers.
+func FirstNotNil[T any](pp ...*T) *T {
 	return Coalesce(pp...)
 }
 
+// FirstNonNil returns the first non-nil pointer of pp, or nil if there is none.
+//
+// Deprecated: use [FirstNotNil] instead, it is named consistently
+// with [SliceNotNil] and [MapNotNil].
+//
+//go:fix inline
+func FirstNonNil[T any](pp ...*T) *T {
+	return FirstNotNil(pp...)
+}
 
 // Coalesce returns the first non-zero value of vv, or the zero value if there is none.
 //
