@@ -56,26 +56,24 @@ func unwrapAll(err error, yield func(error) bool) bool {
 //
 // It walks the same error tree as [UnwrapAll] and reports each error
 // that is either of type E directly or convertible to E via its
-// As(any) bool method.
-//
-// Note that an error satisfying both conditions is reported twice.
+// As(any) bool method. Each matching error is reported exactly once.
 func UnwrapAllAs[E error](errs ...error) iter.Seq[E] {
+	type AsI interface{ As(any) bool }
+
 	return func(yield func(E) bool) {
 		for err := range UnwrapAll(errs...) {
-			if e, ok := err.(E); ok {
-				if !yield(e) {
-					return
+			e, ok := err.(E)
+			if !ok {
+				// the same order as errors.As: the As() method is consulted
+				// only when the error is not of type E itself, otherwise
+				// an error implementing As() for its own type is reported twice
+				if x, isAs := err.(AsI); isAs {
+					ok = x.As(&e)
 				}
 			}
 
-			type AsI interface{ As(any) bool }
-			if x, ok := err.(AsI); ok {
-				var e E
-				if x.As(&e) {
-					if !yield(e) {
-						return
-					}
-				}
+			if ok && !yield(e) {
+				return
 			}
 		}
 	}
